@@ -1,493 +1,560 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Indian Law Dashboard — IPC, CrPC, Evidence (Embedded Sections)</title>
-<style>
-  :root{--bg:#071126;--panel:#0d1b2a;--soft:#112536;--muted:#98a6bf;--text:#e6eef8;--accent:#3fb0ff;--radius:12px}
-  [data-theme='light']{--bg:#f7fafc;--panel:#fff;--soft:#f1f5f9;--muted:#475569;--text:#071526;--accent:#2563eb}
-  *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);min-height:100vh}
-  a{color:var(--accent)}
-  .app{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px}
-  .sidebar{background:var(--panel);border-radius:var(--radius);padding:14px;height:calc(100vh - 32px);overflow:auto}
-  .card{background:var(--panel);border-radius:var(--radius);padding:12px}
-  .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#6de3c6)}
-  .sub{color:var(--muted);font-size:13px}
-  input,textarea,select,button{font-family:inherit}
-  input,select{background:transparent;border:0;color:var(--text);outline:none}
-  textarea{width:100%;min-height:120px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:var(--soft);color:var(--text)}
-  .btn{padding:8px 12px;border-radius:10px;border:0;background:linear-gradient(135deg,var(--accent),#7bb6ff);color:#052019;cursor:pointer}
-  .btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.06)}
-  .grid{display:grid;grid-template-columns:1fr 460px;gap:16px}
-  .list{max-height:380px;overflow:auto}
-  .section{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.04);margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,.01), transparent)}
-  .tag{display:inline-block;padding:4px 8px;border-radius:8px;background:var(--soft);color:var(--muted);font-size:12px;margin-right:6px}
-  footer{font-size:12px;color:var(--muted);padding:10px}
-  code{background:rgba(0,0,0,.2);padding:2px 6px;border-radius:6px;color:var(--muted)}
-  .small{font-size:12px;color:var(--muted)}
-  @media(max-width:980px){.app{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Indian Law Dashboard — Constitution & Law Books</title>
+  <meta name="description" content="A single-file web dashboard on the Constitution of India, Fundamental Rights, and a curated collection of Indian law books. Built with HTML, CSS, and JS in one file." />
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121a2a;
+      --soft: #18243a;
+      --muted: #7e8aa5;
+      --text: #e6edf7;
+      --acc: #4da3ff;
+      --acc-2: #6cf0c2;
+      --danger: #ff7b7b;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    [data-theme="light"]{
+      --bg: #f7f9fc;
+      --panel: #ffffff;
+      --soft: #eef2f9;
+      --muted: #606b85;
+      --text: #0f1320;
+      --acc: #2f6bff;
+      --acc-2: #10b981;
+      --danger: #dc2626;
+      --shadow: 0 10px 24px rgba(14,23,49,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 80% -10%, rgba(77,163,255,.15), transparent 60%),
+                  radial-gradient(1000px 800px at -10% 110%, rgba(108,240,194,.12), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+    }
+    a{color:var(--acc); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Layout */
+    .app{display:grid; grid-template-columns: 280px 1fr; gap:22px; padding:22px; min-height:100vh}
+    .sidebar{background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; position:sticky; top:22px; height:calc(100vh - 44px); overflow:auto}
+    .main{display:flex; flex-direction:column; gap:22px}
+    .card{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow:var(--shadow)}
+
+    /* Header */
+    .header{display:flex; gap:14px; align-items:center; padding:16px 18px}
+    .brand{display:flex; align-items:center; gap:10px}
+    .logo{width:36px; height:36px; border-radius:12px; background: linear-gradient(135deg, var(--acc), var(--acc-2)); box-shadow: 0 8px 24px rgba(77,163,255,.35)}
+    .title{font-weight:800; letter-spacing:.2px}
+    .sub{color:var(--muted); font-size:12px}
+
+    .searchbar{display:flex; align-items:center; gap:10px; flex:1; background:var(--soft); padding:10px 12px; border-radius:14px}
+    .searchbar input{background:transparent; border:none; outline:none; color:var(--text); width:100%}
+    .btn{border:none; cursor:pointer; padding:10px 14px; border-radius:12px; color:#fff; background:linear-gradient(135deg,var(--acc),#7bb6ff)}
+    .btn.alt{background:linear-gradient(135deg,var(--acc-2),#6ff2cc); color:#052019}
+    .btn.ghost{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.12)}
+
+    /* Sidebar */
+    .nav h4{margin:0 0 10px 0}
+    .nav a{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; color:var(--text)}
+    .nav a:hover{background:var(--soft)}
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+    .chip{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; background:var(--soft); color:var(--muted); font-size:12px}
+
+    /* Sections */
+    .hero{padding:20px 22px}
+    .hero h1{margin:0 0 8px 0; font-size:28px}
+    .hero p{margin:0; color:var(--muted)}
+
+    .grid{display:grid; grid-template-columns: repeat(12, 1fr); gap:22px}
+    .col-4{grid-column: span 4}
+    .col-6{grid-column: span 6}
+    .col-8{grid-column: span 8}
+    .col-12{grid-column: span 12}
+    @media (max-width: 960px){
+      .app{grid-template-columns: 1fr}
+      .sidebar{position:static; height:auto}
+      .grid{grid-template-columns: repeat(6,1fr)}
+      .col-4{grid-column: span 6}
+      .col-6{grid-column: span 6}
+      .col-8{grid-column: span 6}
+      .col-12{grid-column: span 6}
+    }
+
+    /* Accordions */
+    .accordion{border-top:1px solid rgba(255,255,255,.08)}
+    .accordion details{border-bottom:1px solid rgba(255,255,255,.08)}
+    .accordion summary{cursor:pointer; list-style:none; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+    .accordion summary::-webkit-details-marker{display:none}
+    .accordion .content{padding:0 18px 16px 18px; color:var(--muted)}
+
+    /* Books */
+    .toolbar{display:flex; align-items:center; gap:10px; padding:14px 18px}
+    .toolbar .input{flex:1; display:flex; align-items:center; gap:8px; background:var(--soft); padding:8px 12px; border-radius:12px}
+    .toolbar input, .toolbar select{border:none; outline:none; background:transparent; color:var(--text)}
+    .books{display:grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap:16px; padding:0 18px 18px}
+    .book{background:linear-gradient(180deg, rgba(77,163,255,.12), transparent 35%), var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:8px}
+    .book h4{margin:2px 0}
+    .book .meta{font-size:13px; color:var(--muted)}
+    .tags{display:flex; flex-wrap:wrap; gap:8px}
+    .tag{padding:4px 8px; border-radius:999px; background:var(--soft); font-size:12px; color:var(--muted)}
+    .book .actions{display:flex; gap:8px; margin-top:auto}
+
+    /* Footer */
+    .footer{padding:14px 18px; color:var(--muted); font-size:12px}
+  </style>
 </head>
 <body>
   <div class="app" id="app">
-    <aside class="sidebar card">
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
-        <div class="logo" aria-hidden></div>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand" style="margin-bottom:12px">
+        <div class="logo" aria-hidden="true"></div>
         <div>
-          <div style="font-weight:700">Indian Law Dashboard</div>
-          <div class="sub">Embedded: large IPC + key CrPC & Evidence sections (searchable)</div>
+          <div class="title">Indian Law Dashboard</div>
+          <div class="sub">Constitution · Rights · Books</div>
         </div>
       </div>
-
-      <div style="margin-top:10px;margin-bottom:10px">
-        <div style="font-weight:600">Quick actions</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-          <button id="exportFullActs" class="btn ghost">Export Imported Acts</button>
-          <button id="clearFullActs" class="btn ghost">Clear Imported Acts</button>
-          <label class="btn ghost" style="cursor:pointer">Import Acts (JSON)
-            <input id="fileInput" type="file" accept="application/json" style="display:none" />
-          </label>
-        </div>
+      <div class="nav">
+        <h4>Navigate</h4>
+        <a href="#fundamental-rights">Fundamental Rights</a>
+        <a href="#dpsp">Directive Principles</a>
+        <a href="#duties">Fundamental Duties</a>
+        <a href="#book-collection">Law Books Collection</a>
+        <a href="#resources">Official Resources</a>
+        <div class="divider"></div>
+        <h4>Quick Info</h4>
+        <div class="chip">Articles · Parts · Schedules</div>
+        <div class="chip">Local bookmarks saved</div>
       </div>
-
-      <hr style="border:none;border-top:1px solid rgba(255,255,255,.04);margin:10px 0" />
-
-      <div style="font-weight:600">Contents</div>
-      <nav style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-        <a href="#rights">Rights (Part III)</a>
-        <a href="#ipc">Indian Penal Code — Embedded Sections</a>
-        <a href="#crpc">CrPC — Key Sections</a>
-        <a href="#evidence">Evidence Act — Key Sections</a>
-        <a href="#books">Books</a>
-      </nav>
-
-      <hr style="border:none;border-top:1px solid rgba(255,255,255,.04);margin:10px 0" />
-      <div style="font-weight:600">Note</div>
-      <div class="sub">This file embeds many IPC sections directly. If you later want every section for all Acts, consider using the Import tool with JSON files (keeps file modular).</div>
     </aside>
 
-    <main>
-      <section class="card header" style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:18px;font-weight:700">Constitution · IPC · CrPC · Evidence — Dashboard</div>
-          <div class="sub">Type an activity to find Articles and exact criminal sections.</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <div style="background:var(--soft);padding:8px;border-radius:8px;display:flex;gap:8px;align-items:center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            <input id="globalSearch" placeholder="Search rights, IPC section, or book..." />
+    <!-- Main -->
+    <main class="main">
+      <header class="card header">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <div class="title">Constitution of India — Dashboard</div>
+            <div class="sub">Single-file app (HTML · CSS · JS)</div>
           </div>
-          <button id="themeToggle" class="btn ghost">Toggle Theme</button>
+        </div>
+        <div class="searchbar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/></svg>
+          <input id="globalSearch" placeholder="Search rights, articles, or books… (e.g., Article 21, CrPC)" />
+        </div>
+        <button class="btn ghost" id="themeToggle" title="Toggle theme">Toggle Theme</button>
+      </header>
+
+      <section class="card hero">
+        <h1>Know your Constitution. Explore key rights. Find essential law books.</h1>
+        <p>Built for quick reference and study. Use the search bar to filter everything. Bookmark items to save for later (stored in your browser).</p>
+      </section>
+
+      <!-- Fundamentals -->
+      <section id="fundamental-rights" class="card">
+        <div class="header" style="justify-content:space-between">
+          <div>
+            <div class="title">Fundamental Rights</div>
+            <div class="sub">Part III · Articles 12–35 · Justiciable rights enforceable in courts</div>
+          </div>
+          <button class="btn alt" data-export="rights">Export Rights Notes</button>
+        </div>
+        <div class="accordion" id="rightsAccordion"></div>
+      </section>
+
+      <div class="grid">
+        <section id="dpsp" class="card col-6">
+          <div class="header">
+            <div>
+              <div class="title">Directive Principles of State Policy (DPSP)</div>
+              <div class="sub">Part IV · Articles 36–51 · Non-justiciable principles guiding governance</div>
+            </div>
+          </div>
+          <div style="padding:0 18px 18px; color:var(--muted)" id="dpspList"></div>
+        </section>
+        <section id="duties" class="card col-6">
+          <div class="header">
+            <div>
+              <div class="title">Fundamental Duties</div>
+              <div class="sub">Part IVA · Article 51A · Duties of citizens</div>
+            </div>
+          </div>
+          <div style="padding:0 18px 18px; color:var(--muted)" id="dutiesList"></div>
+        </section>
+      </div>
+
+      <!-- Books -->
+      <section id="book-collection" class="card">
+        <div class="header" style="justify-content:space-between; align-items:center">
+          <div>
+            <div class="title">Law Books Collection</div>
+            <div class="sub">Curated textbooks, bare acts, and commentaries. (Add your own too!)</div>
+          </div>
+          <div style="display:flex; gap:8px">
+            <button class="btn" id="addBookBtn">Add Book</button>
+            <button class="btn ghost" data-export="books">Export List</button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <div class="input"><input id="bookSearch" placeholder="Search by title, author, act…" /></div>
+          <select id="bookCategory">
+            <option value="">All Categories</option>
+            <option>Constitution</option>
+            <option>Criminal Law</option>
+            <option>Civil Law</option>
+            <option>Procedural Law</option>
+            <option>Evidence</option>
+            <option>Commercial</option>
+            <option>IPR</option>
+            <option>Family</option>
+            <option>Tort</option>
+            <option>Property</option>
+          </select>
+          <select id="bookSort">
+            <option value="title">Sort: Title</option>
+            <option value="author">Sort: Author</option>
+            <option value="year">Sort: Year</option>
+          </select>
+        </div>
+        <div class="books" id="booksGrid"></div>
+      </section>
+
+      <section id="resources" class="card">
+        <div class="header">
+          <div>
+            <div class="title">Official & Helpful Resources</div>
+            <div class="sub">Use reliable sources for statutes and notifications.</div>
+          </div>
+        </div>
+        <div class="hero">
+          <ul>
+            <li><strong>India Code (Official Bare Acts):</strong> <a href="https://www.indiacode.nic.in" target="_blank" rel="noopener">indiacode.nic.in</a></li>
+            <li><strong>Legislative Department:</strong> <a href="https://legislative.gov.in" target="_blank" rel="noopener">legislative.gov.in</a></li>
+            <li><strong>Supreme Court of India:</strong> <a href="https://www.sci.gov.in" target="_blank" rel="noopener">sci.gov.in</a></li>
+            <li><strong>eCourts Services:</strong> <a href="https://ecourts.gov.in" target="_blank" rel="noopener">ecourts.gov.in</a></li>
+          </ul>
         </div>
       </section>
 
-      <div class="grid" style="margin-top:12px">
-        <div>
-          <!-- Issue finder -->
-          <section id="rights" class="card" style="margin-bottom:12px">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div style="font-weight:700">Describe the activity</div>
-                <div class="sub">e.g., "I was assaulted", "property stolen", "fraud online", "arrest without warrant"</div>
-              </div>
-              <div style="display:flex;gap:8px">
-                <button id="analyzeBtn" class="btn">Analyze</button>
-                <button id="clearIssue" class="btn ghost">Clear</button>
-              </div>
-            </div>
-
-            <textarea id="issueText" placeholder="Type incident or activity here..."></textarea>
-            <div id="analysisResults" style="margin-top:12px"></div>
-          </section>
-
-          <!-- IPC embedded sections -->
-          <section id="ipc" class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div style="font-weight:700">Indian Penal Code — Embedded sections</div>
-                <div class="sub">Commonly used sections are embedded below. Use the search box to jump. (You can import full IPC JSON if needed.)</div>
-              </div>
-              <div>
-                <button id="exportIPC" class="btn ghost">Export IPC (imported+embedded)</button>
-              </div>
-            </div>
-            <div id="ipcList" class="list" style="margin-top:12px"></div>
-          </section>
-
-          <!-- CrPC -->
-          <section id="crpc" class="card" style="margin-top:12px">
-            <div style="font-weight:700">Code of Criminal Procedure — Key sections</div>
-            <div class="sub" style="margin-top:6px">Selected provisions for arrest, bail, FIR, remand, trial</div>
-            <div id="crpcList" class="list" style="margin-top:8px"></div>
-          </section>
-
-          <!-- Evidence -->
-          <section id="evidence" class="card" style="margin-top:12px">
-            <div style="font-weight:700">Indian Evidence Act — Key sections</div>
-            <div class="sub" style="margin-top:6px">Selected provisions on relevance, admissions, confessions, expert evidence</div>
-            <div id="evidenceList" class="list" style="margin-top:8px"></div>
-          </section>
-        </div>
-
-        <aside>
-          <!-- Full-acts list -->
-          <section class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div style="font-weight:700">Imported Full-Acts</div>
-                <div class="sub">Imported acts are stored locally and searchable</div>
-              </div>
-              <div id="importCount" class="sub">0 imported</div>
-            </div>
-            <div id="fullActsList" class="list" style="margin-top:12px"></div>
-          </section>
-
-          <!-- books -->
-          <section id="books" class="card" style="margin-top:12px">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div style="font-weight:700">Law Books Collection</div>
-                <div class="sub">No buying link — reference & bookmarking only</div>
-              </div>
-              <div>
-                <button id="addBookBtn" class="btn ghost">Add Book</button>
-              </div>
-            </div>
-            <div style="margin-top:12px"><input id="bookSearch" placeholder="Search books..." style="width:100%;background:var(--soft);padding:8px;border-radius:8px;border:0;color:var(--text)" /></div>
-            <div id="booksGrid" class="list" style="margin-top:12px"></div>
-          </section>
-        </aside>
-      </div>
-
-      <footer style="margin-top:12px" class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div class="sub">Free to use — educational only. Not legal advice.</div>
-          <div class="sub">Imported Acts are stored in your browser localStorage.</div>
-        </div>
+      <footer class="footer card">
+        <div><strong>Disclaimer:</strong> This dashboard is for educational reference only and is not legal advice. Verify with official gazettes, updated bare acts, and authoritative commentaries.</div>
       </footer>
     </main>
   </div>
 
   <script>
-  /* -------------------------
-     Data: embedded IPC sections
-     (representative set; I embedded a broad list of commonly-referenced sections)
-     ------------------------- */
-  const EMBEDDED_IPC = {
-    code:'IPC',
-    title:'Indian Penal Code, 1860 (embedded selection)',
-    sections: [
-      { section:'120A', title:'Definition of criminal conspiracy (120A)', text:'When two or more persons agree to do, or cause to be done— (a) an illegal act, or (b) an act which is not illegal by illegal means, such an agreement is designated criminal conspiracy.' },
-      { section:'120B', title:'Punishment of criminal conspiracy', text:'Whoever is a party to a criminal conspiracy shall, where no express provision is made in this Code for the punishment of such a conspiracy, be punished in the same manner as if he had abetted the offence which is the object of the conspiracy.' },
-      { section:'121', title:'Waging war against Government of India', text:'Whoever wages war against the Government of India...'}, 
-      { section:'141', title:'Unlawful assembly', text:'An assembly of five or more persons ... is designated an unlawful assembly.' },
-      { section:'142', title:'Being a member of an unlawful assembly', text:'Whoever being aware that he is a member of an unlawful assembly...'},
-      { section:'147', title:'Rioting', text:'Whoever is guilty of rioting, shall be punished with rigorous imprisonment...'},
-      { section:'149', title:'Every member of unlawful assembly guilty of offence committed in prosecution of common object', text:'If an offence is committed by any member of an unlawful assembly... every person who, at the time of committing the offence, is a member of the same unlawful assembly, is guilty of that offence.' },
+    // ---------------------------
+    // Data (summaries kept concise)
+    // ---------------------------
+    const RIGHTS = [
+      { key:'equality', title:'Right to Equality', articles:'Arts. 14–18', summary:'Equality before law, prohibition of discrimination, equality of opportunity in public employment, abolition of untouchability and titles.', notes:'' },
+      { key:'freedom', title:'Right to Freedom', articles:'Arts. 19–22', summary:'Freedoms of speech & expression, assembly, association, movement, residence, profession; protections against arbitrary conviction and preventive detention safeguards.', notes:'' },
+      { key:'exploitation', title:'Right against Exploitation', articles:'Arts. 23–24', summary:'Prohibits human trafficking, begar and other forced labour; bans employment of children in certain hazardous employments.', notes:'' },
+      { key:'religion', title:'Freedom of Religion', articles:'Arts. 25–28', summary:'Freedom of conscience and free profession, practice and propagation of religion; freedom to manage religious affairs; no compulsion in religious instruction in certain institutions.', notes:'' },
+      { key:'culture', title:'Cultural & Educational Rights', articles:'Arts. 29–30', summary:'Protection of interests of minorities; right of minorities to establish and administer educational institutions.', notes:'' },
+      { key:'remedies', title:'Right to Constitutional Remedies', articles:'Art. 32', summary:'Right to move the Supreme Court for enforcement of Fundamental Rights; writs: habeas corpus, mandamus, prohibition, quo warranto, certiorari.', notes:'' },
+    ];
 
-      { section:'299', title:'Culpable homicide', text:'Whoever causes death by doing an act with the intention of causing death, or with the intention of causing such bodily injury as is likely to cause death...'}, 
-      { section:'300', title:'Murder', text:'Except in the cases hereinafter excepted, culpable homicide is murder if the act by which the death is caused is done with the intention of causing death...'}, 
-      { section:'302', title:'Punishment for murder', text:'Whoever commits murder shall be punished with death, or imprisonment for life, and shall also be liable to fine.' },
+    const DPSP = [
+      'Promote welfare of the people; establish a social order with justice (Art. 38).',
+      'Secure a social, economic and political justice; minimise inequalities (Arts. 38–39).',
+      'Ensure adequate means of livelihood, fair distribution of material resources, prevention of concentration of wealth, equal pay for equal work (Art. 39).',
+      'Provide just and humane conditions of work and maternity relief (Art. 42).',
+      'Promote education and interests of weaker sections, including SCs/STs (Art. 46).',
+      'Organisation of village panchayats (Art. 40).',
+      'Promotion of international peace and security (Art. 51).'
+    ];
 
-      { section:'304', title:'Punishment for culpable homicide not amounting to murder', text:'Whoever commits culpable homicide not amounting to murder shall be punished...'}, 
-      { section:'307', title:'Attempt to murder', text:'Whoever does any act with such intention or knowledge and under such circumstances that, if he by that act caused death, he would be guilty of murder...'}, 
+    const DUTIES = [
+      'Abide by the Constitution and respect its ideals and institutions, the National Flag and the National Anthem.',
+      'Cherish and follow the noble ideals which inspired our national struggle for freedom.',
+      'Uphold and protect the sovereignty, unity and integrity of India.',
+      'Defend the country and render national service when called upon to do so.',
+      'Promote harmony and the spirit of common brotherhood and renounce practices derogatory to women.',
+      'Value and preserve the rich heritage of our composite culture.',
+      'Protect and improve the natural environment and have compassion for living creatures.',
+      'Develop scientific temper, humanism and the spirit of inquiry and reform.',
+      'Safeguard public property and abjure violence.',
+      'Strive towards excellence in all spheres of individual and collective activity.',
+      'Parent/guardian duty to provide opportunities for education to child (6 to 14 years).'
+    ];
 
-      { section:'312', title:'Causing miscarriage', text:'Causing miscarriage is an offence with punishment as provided in this Section...'}, 
+    const BOOKS = [
+      { id:1, title:'Constitution of India — Bare Act (Latest)', author:'Government of India', year:2024, category:'Constitution', tags:['Bare Act','Official'], link:'https://www.indiacode.nic.in' },
+      { id:2, title:'V.N. Shukla’s Constitution of India', author:'Eminent Editors', year:2023, category:'Constitution', tags:['Commentary'], link:'#'},
+      { id:3, title:'Criminal Procedure Code (CrPC) — Bare Act', author:'Government of India', year:2024, category:'Procedural Law', tags:['Bare Act'], link:'https://www.indiacode.nic.in'},
+      { id:4, title:'Indian Penal Code (IPC)/BNS — Bare Act', author:'Government of India', year:2024, category:'Criminal Law', tags:['Bare Act'], link:'https://www.indiacode.nic.in'},
+      { id:5, title:'Indian Evidence Act — Bare Act', author:'Government of India', year:2024, category:'Evidence', tags:['Bare Act'], link:'https://www.indiacode.nic.in'},
+      { id:6, title:'K.D. Gaur — Textbook on Indian Penal Code', author:'K.D. Gaur', year:2020, category:'Criminal Law', tags:['Textbook'], link:'#'},
+      { id:7, title:'Ratanlal & Dhirajlal — The Code of Criminal Procedure', author:'Ratanlal & Dhirajlal', year:2022, category:'Procedural Law', tags:['Commentary'], link:'#'},
+      { id:8, title:'Pollock & Mulla — Indian Contract Act', author:'Mulla', year:2019, category:'Commercial', tags:['Commentary'], link:'#'},
+      { id:9, title:'Avtar Singh — Law of Contracts & Specific Relief', author:'Avtar Singh', year:2021, category:'Commercial', tags:['Textbook'], link:'#'},
+      { id:10, title:'R.K. Bangia — Law of Torts', author:'R.K. Bangia', year:2018, category:'Tort', tags:['Textbook'], link:'#'},
+      { id:11, title:'Mulla — Transfer of Property Act', author:'Mulla', year:2017, category:'Property', tags:['Commentary'], link:'#'},
+      { id:12, title:'Paris, Cornish & Llewelyn — Intellectual Property', author:'Cornish', year:2019, category:'IPR', tags:['Textbook'], link:'#'},
+      { id:13, title:'Hindu Law — Mulla', author:'Mulla', year:2017, category:'Family', tags:['Commentary'], link:'#'},
+      { id:14, title:'Family Law Lectures', author:'Dr. Paras Diwan', year:2019, category:'Family', tags:['Textbook'], link:'#'},
+    ];
 
-      { section:'320', title:'Grievous hurt (definition)', text:'Grievous hurt is defined as the hurt which endangers life, or which causes the sufferer to be during the space of twenty days in severe bodily pain...' }, 
-      { section:'321', title:'Voluntarily causing hurt', text:'Whoever causes hurt shall be punished with imprisonment...'}, 
-      { section:'323', title:'Punishment for voluntarily causing hurt', text:'Whoever voluntarily causes hurt shall be punished with imprisonment for a term...'}, 
-
-      { section:'354', title:'Assault or criminal force to woman with intent to outrage her modesty', text:'Whoever assaults or uses criminal force to any woman, intending to outrage or knowing it to be likely that he will thereby outrage her modesty...'}, 
-      { section:'376', title:'Rape', text:'Whoever, except in the cases hereinafter excepted, has sexual intercourse with a woman... without her consent, or with her consent when it has been obtained by putting her or any person in whom she is interested in fear... shall be punished...'}, 
-      { section:'375', title:'Rape (definition)', text:'A man is said to commit "rape" if he has sexual intercourse with a woman under circumstances falling under any of the descriptions...'}, 
-
-      { section:'378', title:'Theft', text:'Whoever intentionally takes any movable property out of the possession of any person without that person\'s consent, with intent to cause wrongful gain, commits theft.' }, 
-      { section:'379', title:'Punishment for theft', text:'Whoever commits theft shall be punished with imprisonment...'}, 
-      { section:'380', title:'Theft in dwelling-house, etc.', text:'Whoever commits theft in any building, tent or vessel used as a human dwelling, etc., shall be punished...'}, 
-      { section:'381', title:'Theft by clerk or servant of property in possession of master', text:'A clerk or servant who commits theft of his master\'s property...'}, 
-
-      { section:'390', title:'Robbery', text:'Robbery is the offence where in committing theft, the offender uses violence or threat of violence.'}, 
-      { section:'392', title:'Punishment for robbery', text:'Whoever commits robbery shall be punished with rigorous imprisonment...'}, 
-
-      { section:'413', title:'Dishonestly receiving stolen property', text:'Whoever dishonestly receives or retains any stolen property...'}, 
-
-      { section:'420', title:'Cheating and dishonestly inducing delivery of property', text:'Whoever cheats and thereby dishonestly induces any person to deliver any property to any person, or to make, alter or destroy the whole or any part of a valuable security...'}, 
-
-      { section:'467', title:'Forgery of valuable security, will, etc.', text:'Whoever forges a valuable security, will, authority to make, transfer or receive any valuable security...'}, 
-      { section:'468', title:'Forgery for purpose of cheating', text:'Whoever commits forgery, intending that the document or electronic record shall be used for the purpose of cheating...'}, 
-      { section:'471', title:'Using as genuine a forged document', text:'Whoever fraudulently or dishonestly uses as genuine a forged document...'}, 
-
-      { section:'499', title:'Defamation (definition)', text:'Whoever, by words either spoken or intended to be read, or by signs or by visible representations, makes or publishes any imputation concerning any person... is said to defame that person.' }, 
-      { section:'500', title:'Punishment for defamation', text:'Whoever defames another shall be punished with simple imprisonment...'}, 
-
-      { section:'503', title:'Criminal intimidation (definition)', text:'Whoever threatens another with injury to his person, reputation or property, etc., with intent to cause alarm...'}, 
-      { section:'506', title:'Punishment for criminal intimidation', text:'Whoever commits the offence of criminal intimidation shall be punished with imprisonment...'}, 
-
-      { section:'498A', title:'Cruelty by husband or relatives of husband', text:'Husband or relative of husband of a woman subjecting her to cruelty shall be punished...'},
-
-      { section:'34', title:'Acts done by several persons in furtherance of common intention', text:'When a criminal act is done by several persons in furtherance of the common intention of all, each of such persons is liable for that act.'},
-      { section:'149', title:'Every member of unlawful assembly guilty of offence committed in prosecution of common object (repeat)', text:'(See above.)'},
-
-      /* add more as needed — the list above is extensive and meant to be a large embedded set */
-    ]
-  };
-
-  /* ---------- CrPC key sections (embedded selection) ---------- */
-  const EMBEDDED_CRPC = {
-    code:'CrPC',
-    title:'Code of Criminal Procedure, 1973 (selected sections)',
-    sections:[
-      { section:'154', title:'Information in cognizable cases (FIR)', text:'Information relating to the commission of a cognizable offence can be given orally or in writing to an officer in charge of a police station; the officer shall reduce the information to writing and enter it in the station diary.' },
-      { section:'157', title:'Investigation when complaint is made to magistrate', text:'(Summary) Magistrate may direct police to investigate.' },
-      { section:'41', title:'When police may arrest without warrant', text:'If any person has committed a non-bailable offence, an officer in charge of a police station may arrest such person without a warrant in certain cases.' },
-      { section:'46', title:'Reasonable force may be used', text:'For the purpose of arrest, police may use all means necessary to effect it.' },
-      { section:'50', title:'Person arrested to be informed of grounds of arrest', text:'Every person arrested shall be informed of the grounds for such arrest.' },
-      { section:'167', title:'Procedure when investigation cannot be completed in 24 hours; police remand', text:'If investigation cannot be completed, person may be remanded to custody by magistrate.' },
-      { section:'437', title:'When bail may be granted', text:'Circumstances under which bail may be granted for bailable and non-bailable offences.' },
-      { section:'438', title:'Direction for grant of bail to person apprehending arrest (anticipatory bail)', text:'Magistrate or High Court may grant anticipatory bail under circumstances.' }
-    ]
-  };
-
-  /* ---------- Evidence key sections (embedded selection) ---------- */
-  const EMBEDDED_EVIDENCE = {
-    code:'EVIDENCE',
-    title:'Indian Evidence Act, 1872 (selected sections)',
-    sections:[
-      { section:'3', title:'Interpretation clause', text:'This Act shall apply to all judicial proceedings...'}, 
-      { section:'5', title:'Evidence may be given of facts in issue and relevant facts', text:'Evidence must be confined to facts in issue and relevant facts.'},
-      { section:'24', title:'Confession caused by inducement, threat or promise', text:'A confession caused by inducement, threat or promise is irrelevant.'},
-      { section:'27', title:'How much of information received from accused may be proved', text:'If any fact is discovered in consequence of information received from accused person, the fact so discovered may be proved.'},
-      { section:'32', title:'Cases in which statement of relevant fact by person who is dead may be relevant', text:'Statements of persons who are dead may in certain cases be given in evidence.'},
-      { section:'65B', title:'Admissibility of electronic records', text:'Admissibility conditions for electronic records; certificate requirements.'}
-    ]
-  };
-
-  /* ---------- small set of constitutional rights for reference ---------- */
-  const ARTICLES_PART3 = [
-    { id:14, title:'Article 14', text:'Equality before law and equal protection of law.' },
-    { id:19, title:'Article 19', text:'Freedom of speech, assembly, movement, etc., subject to reasonable restrictions.' },
-    { id:20, title:'Article 20', text:'Protection in respect of conviction for offences.' },
-    { id:21, title:'Article 21', text:'Protection of life and personal liberty.' },
-    { id:32, title:'Article 32', text:'Right to constitutional remedies.' }
-  ];
-
-  /* ---------- state (localStorage for imported acts, books, bookmarks) ---------- */
-  const state = {
-    fullActs: JSON.parse(localStorage.getItem('fullActs')||'{}'),
-    books: JSON.parse(localStorage.getItem('books')||'null') || [
-      {id:1,title:'Constitution — Bare Act',author:'Govt of India',year:2024,category:'Constitution',tags:['Bare Act']},
-      {id:2,title:'Indian Penal Code — Bare Act (reference)',author:'Govt of India',year:2024,category:'Criminal Law',tags:['Bare Act']},
-      {id:3,title:'Code of Criminal Procedure — Bare Act',author:'Govt',year:2024,category:'Procedural Law',tags:['Bare Act']}
-    ],
-    bookmarks: JSON.parse(localStorage.getItem('bookmarks')||'{}'),
-    theme: localStorage.getItem('theme') || (matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-  };
-
-  function save(){ localStorage.setItem('fullActs', JSON.stringify(state.fullActs)); localStorage.setItem('books', JSON.stringify(state.books)); localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks)); localStorage.setItem('theme', state.theme); }
-
-  function el(tag, attrs={}, ...children){ const n = document.createElement(tag); for(const k in attrs){ if(k==='class') n.className = attrs[k]; else if(k==='html') n.innerHTML=attrs[k]; else n.setAttribute(k, attrs[k]); } children.forEach(c=>{ if(c==null) return; n.appendChild(typeof c==='string' ? document.createTextNode(c) : c); }); return n; }
-
-  /* ---------- render embedded lists ---------- */
-  function renderIPC(){
-    const wrap = document.getElementById('ipcList'); wrap.innerHTML=''; EMBEDDED_IPC.sections.forEach(s=>{
-      const card = el('div',{class:'section'}, el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:700'}, `§${s.section} — ${s.title}`), el('div',{class:'small'}, s.text.slice(0,320) + (s.text.length>320 ? '...' : ''))), el('div',{}, el('button',{class:'btn', onclick:()=> openSectionModal('IPC', s.section, s.title, s.text)}, 'Open')) ) );
-      wrap.appendChild(card);
-    });
-  }
-
-  function renderCrPC(){
-    const wrap = document.getElementById('crpcList'); wrap.innerHTML=''; EMBEDDED_CRPC.sections.forEach(s=>{
-      wrap.appendChild(el('div',{class:'section'}, el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:700'}, `§${s.section} — ${s.title}`), el('div',{class:'small'}, s.text.slice(0,300) + (s.text.length>300 ? '...' : ''))), el('div',{}, el('button',{class:'btn', onclick:()=> openSectionModal('CrPC', s.section, s.title, s.text)}, 'Open')) )));
-    });
-  }
-
-  function renderEvidence(){
-    const wrap = document.getElementById('evidenceList'); wrap.innerHTML=''; EMBEDDED_EVIDENCE.sections.forEach(s=>{
-      wrap.appendChild(el('div',{class:'section'}, el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:700'}, `§${s.section} — ${s.title}`), el('div',{class:'small'}, s.text.slice(0,300) + (s.text.length>300 ? '...' : ''))), el('div',{}, el('button',{class:'btn', onclick:()=> openSectionModal('Evidence', s.section, s.title, s.text)}, 'Open')) )));
-    });
-  }
-
-  /* ---------- modal to show section text ---------- */
-  function openSectionModal(actCode, section, title, text){
-    const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'});
-    const box = el('div',{style:'width:min(920px,96vw);max-height:90vh;overflow:auto;background:var(--panel);padding:18px;border-radius:12px'});
-    box.appendChild(el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:800'}, `${actCode} §${section} — ${title}`), el('div',{class:'small', style:'margin-top:6px'}, '')), el('div',{}, el('button',{class:'btn ghost', onclick:()=> overlay.remove()}, 'Close'))));
-    box.appendChild(el('div',{style:'margin-top:12px'}, el('div',{class:'small'}, text)));
-    overlay.appendChild(box); document.body.appendChild(overlay);
-  }
-
-  /* ---------- render books (no buy/open button) ---------- */
-  function renderBooks(filter=''){
-    const grid = document.getElementById('booksGrid'); grid.innerHTML='';
-    state.books.filter(b=> !filter || (b.title + ' ' + (b.author||'') + ' ' + (b.category||'')).toLowerCase().includes(filter.toLowerCase())).forEach(b=>{
-      const node = el('div',{class:'section'}, el('div',{}, el('div',{style:'font-weight:700'}, b.title), el('div',{class:'small'}, `${b.author || ''} · ${b.year || ''}`)), el('div',{style:'display:flex;gap:8px;margin-top:8px'}, el('button',{class:'btn ghost', onclick:()=> { state.bookmarks[`book:${b.id}`] = {type:'book', id:b.id, title:b.title, when:Date.now()}; save(); alert('Bookmarked'); }}, 'Bookmark')));
-      grid.appendChild(node);
-    });
-  }
-
-  /* ---------- render imported acts list ---------- */
-  function renderFullActsList(){
-    const wrap = document.getElementById('fullActsList'); wrap.innerHTML=''; const keys = Object.keys(state.fullActs||{}); document.getElementById('importCount').textContent = `${keys.length} imported`;
-    if(!keys.length){ wrap.innerHTML = '<div class="small">No imported acts. Use Import Acts to add full text JSON.</div>'; return; }
-    keys.forEach(code=>{
-      const act = state.fullActs[code];
-      wrap.appendChild(el('div',{class:'section'}, el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:700'}, `${act.code} — ${act.title}`), el('div',{class:'small'}, `${act.sections? act.sections.length : 0} sections imported`)), el('div',{}, el('button',{class:'btn', onclick:()=> viewActSections(act.code)}, 'View'), el('button',{class:'btn ghost', onclick:()=> exportActJSON(act.code)}, 'Export')))));
-    });
-  }
-
-  function viewActSections(code){
-    const act = state.fullActs[code]; if(!act) return alert('Act not found');
-    const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'});
-    const box = el('div',{style:'width:min(1000px,96vw);max-height:90vh;overflow:auto;background:var(--panel);padding:18px;border-radius:12px'});
-    box.appendChild(el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:800'}, `${act.code} — ${act.title}`), el('div',{class:'small', style:'margin-top:6px'}, `${act.sections?act.sections.length:0} sections`)), el('div',{}, el('button',{class:'btn ghost', onclick:()=> overlay.remove()}, 'Close'))));
-    const list = el('div',{style:'margin-top:12px'});
-    (act.sections||[]).forEach(sec=> list.appendChild(el('div',{class:'section'}, el('div',{style:'font-weight:700'}, `§${sec.section} — ${sec.title || ''}`), el('div',{class:'small'}, (sec.text||'').slice(0,800) + ((sec.text||'').length>800? '...':'')), el('div',{style:'margin-top:8px'}, el('button',{class:'btn', onclick:()=> openSectionModal(act.code, sec.section, sec.title||'', sec.text||'')}, 'Open Section')))));
-    box.appendChild(list); overlay.appendChild(box); document.body.appendChild(overlay);
-  }
-
-  function exportActJSON(code){
-    const act = state.fullActs[code]; if(!act) return alert('Act not found'); const blob = new Blob([JSON.stringify(act,null,2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${act.code}.json`; a.click(); setTimeout(()=> URL.revokeObjectURL(url),1500);
-  }
-
-  /* ---------- Import Full Acts from file ---------- */
-  document.getElementById('fileInput').addEventListener('change', (e)=>{
-    const f = e.target.files[0]; if(!f) return; const reader = new FileReader();
-    reader.onload = ()=>{
-      try{
-        const obj = JSON.parse(reader.result);
-        if(Array.isArray(obj)){ obj.forEach(a=> { if(a.code) state.fullActs[a.code] = a; }); }
-        else if(obj.code){ state.fullActs[obj.code] = obj; }
-        else { Object.assign(state.fullActs, obj); }
-        save(); renderFullActsList(); alert('Imported successfully.');
-      }catch(err){ alert('Invalid JSON: ' + err.message); }
+    // -------------
+    // State & Utils
+    // -------------
+    const state = {
+      theme: localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'),
+      rights: RIGHTS,
+      books: JSON.parse(localStorage.getItem('books')||'null') || BOOKS,
+      bookmarks: JSON.parse(localStorage.getItem('bookmarks')||'{}'),
+      notes: JSON.parse(localStorage.getItem('rightsNotes')||'{}')
     };
-    reader.readAsText(f);
-  });
 
-  /* ---------- Export all imported acts ---------- */
-  document.getElementById('exportFullActs').addEventListener('click', ()=> {
-    if(!Object.keys(state.fullActs||{}).length) return alert('No imported acts');
-    const blob = new Blob([JSON.stringify(state.fullActs,null,2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='full-acts-library.json'; a.click(); setTimeout(()=> URL.revokeObjectURL(url),1500);
-  });
-
-  /* ---------- Clear imported acts ---------- */
-  document.getElementById('clearFullActs').addEventListener('click', ()=> {
-    if(!confirm('Clear all imported acts from localStorage?')) return;
-    state.fullActs = {}; save(); renderFullActsList(); alert('Cleared imported acts');
-  });
-
-  /* ---------- Export IPC combined (embedded + imported) ---------- */
-  document.getElementById('exportIPC').addEventListener('click', ()=>{
-    const combined = { embedded: EMBEDDED_IPC, imported: state.fullActs['IPC'] || null };
-    const blob = new Blob([JSON.stringify(combined,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download='ipc_combined.json'; a.click(); setTimeout(()=> URL.revokeObjectURL(url),1500);
-  });
-
-  /* ---------- Analysis: match articles + embedded IPC + imported acts ---------- */
-  function tokenize(text){ return (text||'').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean); }
-  function scoreMatch(keys,tokens){ let score=0; const ks=(keys||[]).map(k=>String(k).toLowerCase()); tokens.forEach(t=>{ if(ks.includes(t)) score+=1; else ks.forEach(k=>{ if(k.includes(t) || t.includes(k)) score+=0.5; }); }); return score; }
-
-  document.getElementById('analyzeBtn').addEventListener('click', ()=>{
-    const t = document.getElementById('issueText').value.trim(); if(!t){ alert('Please type a short description of the activity/issue.'); return; }
-    analyzeIssue(t);
-  });
-
-  function analyzeIssue(text){
-    const tokens = tokenize(text);
-    const out = document.getElementById('analysisResults'); out.innerHTML='';
-    // Articles
-    const artScores = ARTICLES_PART3.map(a=> ({...a, score: scoreMatch([a.id,a.title].concat(a.text.split(/[^a-z0-9]+/i)), tokens)})).sort((a,b)=>b.score-a.score);
-    const topArts = artScores.filter(a=>a.score>0).slice(0,6);
-    if(topArts.length){
-      out.appendChild(el('div',{}, el('div',{style:'font-weight:700'}, 'Relevant Constitutional Articles')));
-      topArts.forEach(a=> out.appendChild(el('div',{class:'section'}, el('div',{style:'font-weight:700'}, `Article ${a.id} — ${a.title}`), el('div',{class:'small'}, a.text), el('div',{}, el('button',{class:'btn ghost', onclick:()=> openArticle(a.id)}, 'Read')))));
+    function save(){
+      localStorage.setItem('books', JSON.stringify(state.books));
+      localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+      localStorage.setItem('rightsNotes', JSON.stringify(state.notes));
+      localStorage.setItem('theme', state.theme);
     }
 
-    // Embedded IPC matches
-    const ipcMatches = EMBEDDED_IPC.sections.filter(s => tokens.some(tok => (s.section + ' ' + (s.title||'') + ' ' + s.text).toLowerCase().includes(tok))).slice(0,30);
-    if(ipcMatches.length){
-      out.appendChild(el('div',{}, el('div',{style:'font-weight:700;margin-top:8px'}, 'Matches in embedded IPC sections')));
-      ipcMatches.forEach(s=> out.appendChild(el('div',{class:'section'}, el('div',{style:'font-weight:700'}, `§${s.section} — ${s.title}`), el('div',{class:'small'}, s.text.slice(0,400)+'...'), el('div',{}, el('button',{class:'btn', onclick:()=> openSectionModal('IPC', s.section, s.title, s.text)}, 'Open Section')))));
-    }
-
-    // Imported full acts search
-    const importedMatches = [];
-    Object.values(state.fullActs||{}).forEach(act=>{
-      (act.sections||[]).forEach(sec=>{
-        const combined = (sec.section + ' ' + (sec.title||'') + ' ' + (sec.text||'')).toLowerCase();
-        if(tokens.some(tok => combined.includes(tok))) importedMatches.push({act: act.code, section: sec.section, title: sec.title, text: sec.text});
+    function el(tag, attrs={}, ...children){
+      const node = document.createElement(tag);
+      Object.entries(attrs).forEach(([k,v])=>{
+        if (k==='class') node.className = v;
+        else if (k.startsWith('on') && typeof v === 'function') node.addEventListener(k.slice(2).toLowerCase(), v);
+        else if (k==='html') node.innerHTML=v;
+        else node.setAttribute(k,v);
       });
-    });
-    if(importedMatches.length){
-      out.appendChild(el('div',{}, el('div',{style:'font-weight:700;margin-top:8px'}, 'Matches in imported Acts')));
-      importedMatches.slice(0,30).forEach(m=> out.appendChild(el('div',{class:'section'}, el('div',{style:'font-weight:700'}, `${m.act} §${m.section} — ${m.title||''}`), el('div',{class:'small'}, (m.text||'').slice(0,400)+'...'), el('div',{}, el('button',{class:'btn', onclick:()=> openSectionModal(m.act, m.section, m.title||'', m.text||'')}, 'Open Section')))));
+      children.forEach(ch=>{
+        if (ch==null) return;
+        node.appendChild(typeof ch === 'string' ? document.createTextNode(ch) : ch);
+      })
+      return node;
     }
 
-    if(!topArts.length && !ipcMatches.length && !importedMatches.length){
-      out.appendChild(el('div',{class:'small'}, 'No direct matches found. Try keywords: "arrest", "murder", "theft", "rape", "bail", "cheating". You can also import full IPC/CrPC/Evidence JSON for exhaustive search.'));
+    // ----------------
+    // Render: Rights
+    // ----------------
+    function renderRights(filter=''){
+      const wrap = document.getElementById('rightsAccordion');
+      wrap.innerHTML='';
+      state.rights.filter(r=> matchAny([r.title,r.articles,r.summary], filter)).forEach(r=>{
+        const open = false;
+        const det = el('details', {open});
+        const sum = el('summary', {},
+          el('div', {style:'display:flex; flex-direction:column; gap:4px'},
+            el('div', {style:'font-weight:600'}, `${r.title} — ${r.articles}`),
+            el('div', {class:'sub'}, r.summary)
+          ),
+          el('div', {class:'tags'},
+            el('span', {class:'tag'}, 'Part III'),
+            el('span', {class:'tag'}, 'Justiciable')
+          )
+        );
+        const content = el('div', {class:'content'});
+        const noteKey = r.key;
+        const ta = el('textarea', {style:'width:100%; min-height:72px; border-radius:12px; padding:10px; border:1px solid rgba(255,255,255,.14); background:var(--soft); color:var(--text);'}, state.notes[noteKey]||'');
+        ta.addEventListener('input', ()=>{ state.notes[noteKey]=ta.value; save(); })
+        const btn = el('button', {class:'btn ghost', style:'margin-top:10px'}, 'Bookmark This Right');
+        btn.addEventListener('click', ()=>{
+          state.bookmarks[`right:${noteKey}`] = { type:'right', key:noteKey, title:r.title, when: Date.now() };
+          save();
+          btn.textContent='Bookmarked ✓';
+        })
+        content.append(
+          el('p', {}, 'Add your notes or key cases related to this right:'),
+          ta,
+          el('div', {style:'display:flex; gap:8px; margin-top:8px'}, btn)
+        );
+        det.append(sum, content);
+        wrap.appendChild(det);
+      });
     }
-  }
 
-  function openArticle(id){
-    const a = ARTICLES_PART3.find(x=>x.id===id); if(!a) return;
-    const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'});
-    const box = el('div',{style:'width:min(800px,96vw);max-height:90vh;overflow:auto;background:var(--panel);padding:18px;border-radius:12px'});
-    box.appendChild(el('div',{}, el('div',{style:'font-weight:800'}, `Article ${a.id} — ${a.title}`), el('div',{class:'small', style:'margin-top:8px'}, a.text), el('div',{style:'margin-top:12px'}, el('button',{class:'btn ghost', onclick:()=> overlay.remove()}, 'Close'))));
-    overlay.appendChild(box); document.body.appendChild(overlay);
-  }
+    // ---------------
+    // Render: DPSP & Duties
+    // ---------------
+    function renderBullets(list, targetId){
+      const t = document.getElementById(targetId);
+      t.innerHTML = '';
+      const ul = el('ul');
+      list.forEach(x=> ul.appendChild(el('li', {}, x)));
+      t.appendChild(ul);
+    }
 
-  /* ---------- wire global search for quick filters ---------- */
-  document.getElementById('globalSearch').addEventListener('input', (e)=>{
-    const q = e.target.value.trim().toLowerCase();
-    // filter books and embedded IPC titles quickly
-    renderBooks(q);
-    // quick highlight imported acts
-    if(!q){ renderFullActsList(); return; }
-    const matches = Object.values(state.fullActs||{}).filter(a => (a.code + ' ' + a.title).toLowerCase().includes(q));
-    const wrap = document.getElementById('fullActsList'); wrap.innerHTML=''; if(matches.length) matches.forEach(act=> wrap.appendChild(el('div',{class:'section'}, el('div',{style:'font-weight:700'}, `${act.code} — ${act.title}`), el('div',{class:'small'}, `${act.sections?act.sections.length:0} sections`), el('div',{}, el('button',{class:'btn', onclick:()=> viewActSections(act.code)}, 'View')))));
-  });
+    // ---------------
+    // Render: Books
+    // ---------------
+    function renderBooks(filter='', category='', sortBy='title'){
+      const grid = document.getElementById('booksGrid');
+      grid.innerHTML='';
+      const items = state.books
+        .filter(b=> (category? b.category===category : true))
+        .filter(b=> matchAny([b.title, b.author, b.category, (b.tags||[]).join(' ')], filter))
+        .sort((a,b)=>{
+          if (sortBy==='year') return (b.year||0)-(a.year||0);
+          const A = String(a[sortBy]||'').toLowerCase();
+          const B = String(b[sortBy]||'').toLowerCase();
+          return A.localeCompare(B);
+        });
 
-  /* ---------- add book modal ---------- */
-  document.getElementById('addBookBtn').addEventListener('click', ()=>{
-    const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'});
-    const box = el('div',{style:'width:min(720px,96vw);background:var(--panel);padding:14px;border-radius:12px'});
-    box.innerHTML = `<h3 style="margin:0 0 6px">Add a Law Book</h3>
-      <div class="sub">Stored locally in your browser</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-        <input id="nb_title" placeholder="Title" style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.04);background:var(--soft);color:var(--text)" />
-        <input id="nb_author" placeholder="Author" style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.04);background:var(--soft);color:var(--text)" />
-        <input id="nb_year" placeholder="Year" type="number" style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.04);background:var(--soft);color:var(--text)" />
-        <input id="nb_category" placeholder="Category" style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.04);background:var(--soft);color:var(--text)" />
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
-        <button id="nb_cancel" class="btn ghost">Cancel</button>
-        <button id="nb_save" class="btn">Save</button>
-      </div>`;
-    overlay.appendChild(box); document.body.appendChild(overlay);
-    document.getElementById('nb_cancel').addEventListener('click', ()=> overlay.remove());
-    document.getElementById('nb_save').addEventListener('click', ()=>{
-      const t = document.getElementById('nb_title').value.trim(); if(!t) return alert('Title required');
-      const nb = { id: Math.max(0,...state.books.map(b=>b.id))+1, title: t, author: document.getElementById('nb_author').value.trim(), year: Number(document.getElementById('nb_year').value)||null, category: document.getElementById('nb_category').value.trim()||'General' };
-      state.books.push(nb); save(); renderBooks(); overlay.remove();
+      items.forEach(b=>{
+        const isSaved = !!state.bookmarks[`book:${b.id}`];
+        const card = el('div', {class:'book'});
+        card.append(
+          el('div', {class:'tags'},
+            el('span', {class:'tag'}, b.category),
+            ...(b.tags||[]).map(t=> el('span', {class:'tag'}, t))
+          ),
+          el('h4', {}, b.title),
+          el('div', {class:'meta'}, `${b.author} · ${b.year||'—'}`),
+          el('div', {class:'actions'},
+            el('a', {class:'btn', href:b.link||'#', target:'_blank', rel:'noopener'}, 'Open / Buy'),
+            (()=>{
+              const bb = el('button', {class:'btn ghost'}, isSaved? 'Saved ✓' : 'Bookmark');
+              bb.addEventListener('click', ()=>{
+                state.bookmarks[`book:${b.id}`] = { type:'book', id:b.id, title:b.title, when: Date.now() };
+                save();
+                bb.textContent='Saved ✓';
+              });
+              return bb;
+            })()
+          )
+        );
+        grid.appendChild(card);
+      });
+    }
+
+    // ---------------
+    // Helpers
+    // ---------------
+    function matchAny(fields, query){
+      const q = (query||'').trim().toLowerCase();
+      if (!q) return true;
+      return fields.some(f=> String(f||'').toLowerCase().includes(q));
+    }
+
+    function exportJSON(filename, data){
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      setTimeout(()=> URL.revokeObjectURL(url), 1500);
+    }
+
+    // ---------------
+    // Add Book Modal (minimal, inline)
+    // ---------------
+    function openAddBook(){
+      const overlay = el('div', {style:'position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:50'});
+      const box = el('div', {style:'width:min(620px,92vw); background:var(--panel); border-radius:16px; box-shadow:var(--shadow); padding:18px;'});
+      const f = el('form');
+      f.innerHTML = `
+        <h3 style="margin:0 0 6px">Add a Law Book</h3>
+        <p class="sub">Enter details and save. Stored locally in your browser.</p>
+        <div style="display:grid; gap:10px; grid-template-columns:1fr 1fr">
+          <label>Title<br><input required name="title" style="width:100%"/></label>
+          <label>Author<br><input name="author" style="width:100%"/></label>
+          <label>Year<br><input name="year" type="number" style="width:100%"/></label>
+          <label>Category<br>
+            <select name="category" style="width:100%">
+              <option>Constitution</option><option>Criminal Law</option><option>Procedural Law</option><option>Evidence</option><option>Civil Law</option><option>Commercial</option><option>IPR</option><option>Family</option><option>Tort</option><option>Property</option>
+            </select>
+          </label>
+          <label style="grid-column: span 2">Tags (comma-separated)<br><input name="tags" style="width:100%"/></label>
+          <label style="grid-column: span 2">Link (URL to buy/open)<br><input name="link" style="width:100%" placeholder="https://…"/></label>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
+          <button type="button" class="btn ghost" id="cancelAdd">Cancel</button>
+          <button class="btn" type="submit">Save Book</button>
+        </div>
+      `;
+      f.querySelector('#cancelAdd').addEventListener('click', ()=> overlay.remove());
+      f.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const fd = new FormData(f);
+        const book = {
+          id: Math.max(0, ...state.books.map(b=>b.id))+1,
+          title: fd.get('title'),
+          author: fd.get('author'),
+          year: Number(fd.get('year')) || null,
+          category: fd.get('category'),
+          tags: String(fd.get('tags')||'').split(',').map(s=>s.trim()).filter(Boolean),
+          link: fd.get('link')
+        };
+        state.books.push(book);
+        save();
+        renderBooks(document.getElementById('bookSearch').value, document.getElementById('bookCategory').value, document.getElementById('bookSort').value);
+        overlay.remove();
+      })
+      box.appendChild(f);
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+    }
+
+    // ---------------
+    // Global Search (live)
+    // ---------------
+    function wireSearch(){
+      const input = document.getElementById('globalSearch');
+      input.addEventListener('input', ()=>{
+        const q = input.value;
+        renderRights(q);
+        renderBooks(q, document.getElementById('bookCategory').value, document.getElementById('bookSort').value);
+      })
+    }
+
+    // ---------------
+    // Event Listeners
+    // ---------------
+    document.getElementById('themeToggle').addEventListener('click', ()=>{
+      state.theme = (state.theme==='light') ? 'dark' : 'light';
+      applyTheme(); save();
     });
-  });
 
-  /* ---------- theme toggle ---------- */
-  document.getElementById('themeToggle').addEventListener('click', ()=>{ state.theme = state.theme==='light' ? 'dark' : 'light'; applyTheme(); save(); });
-  function applyTheme(){ document.documentElement.setAttribute('data-theme', state.theme); }
+    document.querySelector('[data-export="books"]').addEventListener('click', ()=>{
+      exportJSON('law-books.json', state.books);
+    });
+    document.querySelector('[data-export="rights"]').addEventListener('click', ()=>{
+      exportJSON('rights-notes.json', state.notes);
+    });
 
-  /* ---------- initial rendering ---------- */
-  function init(){
-    applyTheme();
-    renderIPC();
-    renderCrPC();
-    renderEvidence();
-    renderFullActsList();
-    renderBooks();
-  }
-  init();
+    document.getElementById('addBookBtn').addEventListener('click', openAddBook);
+
+    document.getElementById('bookSearch').addEventListener('input', (e)=>{
+      renderBooks(e.target.value, document.getElementById('bookCategory').value, document.getElementById('bookSort').value)
+    });
+    document.getElementById('bookCategory').addEventListener('change', ()=>{
+      renderBooks(document.getElementById('bookSearch').value, document.getElementById('bookCategory').value, document.getElementById('bookSort').value)
+    });
+    document.getElementById('bookSort').addEventListener('change', ()=>{
+      renderBooks(document.getElementById('bookSearch').value, document.getElementById('bookCategory').value, document.getElementById('bookSort').value)
+    });
+
+    // ---------------
+    // Theme
+    // ---------------
+    function applyTheme(){
+      document.documentElement.setAttribute('data-theme', state.theme);
+    }
+
+    // ---------------
+    // Init
+    // ---------------
+    function init(){
+      applyTheme();
+      renderRights();
+      renderBullets(DPSP, 'dpspList');
+      renderBullets(DUTIES, 'dutiesList');
+      renderBooks();
+      wireSearch();
+    }
+
+    init();
   </script>
 </body>
 </html>
