@@ -385,50 +385,6 @@
       list.forEach(x=> ul.appendChild(el('li', {}, x)));
       t.appendChild(ul);
     }
-
-    // ---------------
-    // Render: Books
-    // ---------------
-    function renderBooks(filter='', category='', sortBy='title'){
-      const grid = document.getElementById('booksGrid');
-      grid.innerHTML='';
-      const items = state.books
-        .filter(b=> (category? b.category===category : true))
-        .filter(b=> matchAny([b.title, b.author, b.category, (b.tags||[]).join(' ')], filter))
-        .sort((a,b)=>{
-          if (sortBy==='year') return (b.year||0)-(a.year||0);
-          const A = String(a[sortBy]||'').toLowerCase();
-          const B = String(b[sortBy]||'').toLowerCase();
-          return A.localeCompare(B);
-        });
-
-      items.forEach(b=>{
-        const isSaved = !!state.bookmarks[`book:${b.id}`];
-        const card = el('div', {class:'book'});
-        card.append(
-          el('div', {class:'tags'},
-            el('span', {class:'tag'}, b.category),
-            ...(b.tags||[]).map(t=> el('span', {class:'tag'}, t))
-          ),
-          el('h4', {}, b.title),
-          el('div', {class:'meta'}, `${b.author} · ${b.year||'—'}`),
-          el('div', {class:'actions'},
-            el('a', {class:'btn', href:b.link||'#', target:'_blank', rel:'noopener'}, 'Open / Buy'),
-            (()=>{
-              const bb = el('button', {class:'btn ghost'}, isSaved? 'Saved ✓' : 'Bookmark');
-              bb.addEventListener('click', ()=>{
-                state.bookmarks[`book:${b.id}`] = { type:'book', id:b.id, title:b.title, when: Date.now() };
-                save();
-                bb.textContent='Saved ✓';
-              });
-              return bb;
-            })()
-          )
-        );
-        grid.appendChild(card);
-      });
-    }
-
     // ---------------
     // Helpers
     // ---------------
@@ -558,96 +514,7 @@
   </script>
 </body>
 </html>
-    // ---------------
-    // Render: Books
-    // ---------------
-    function renderBooks(filter='', category='', sortBy='title'){
-      const grid = document.getElementById('booksGrid');
-      grid.innerHTML='';
-      const items = state.books
-        .filter(b=> (category? b.category===category : true))
-        .filter(b=> matchAny([b.title, b.author, b.category, (b.tags||[]).join(' ')], filter))
-        .sort((a,b)=>{
-          if (sortBy==='year') return (b.year||0)-(a.year||0);
-          const A = String(a[sortBy]||'').toLowerCase();
-          const B = String(b[sortBy]||'').toLowerCase();
-          return A.localeCompare(B);
-        });
-
-      items.forEach(b=>{
-        const isSaved = !!state.bookmarks[`book:${b.id}`];
-        const card = el('div', {class:'book'});
-        card.append(
-          el('div', {class:'tags'},
-            el('span', {class:'tag'}, b.category),
-            ...(b.tags||[]).map(t=> el('span', {class:'tag'}, t))
-          ),
-          el('h4', {}, b.title),
-          el('div', {class:'meta'}, `${b.author} · ${b.year||'—'}`),
-          el('div', {class:'actions'},
-            (()=>{
-              const bb = el('button', {class:'btn ghost'}, isSaved? 'Saved ✓' : 'Bookmark');
-              bb.addEventListener('click', ()=>{
-                state.bookmarks[`book:${b.id}`] = { type:'book', id:b.id, title:b.title, when: Date.now() };
-                save();
-                bb.textContent='Saved ✓';
-              });
-              return bb;
-            })()
-          )
-        );
-        grid.appendChild(card);
-      });
-    }
-    // ---------------
-    // Render: Books with Summary + Bookmark
-    // ---------------
-    function renderBooks(filter='', category='', sortBy='title'){
-      const grid = document.getElementById('booksGrid');
-      grid.innerHTML='';
-      const items = state.books
-        .filter(b=> (category? b.category===category : true))
-        .filter(b=> matchAny([b.title, b.author, b.category, (b.tags||[]).join(' ')], filter))
-        .sort((a,b)=>{
-          if (sortBy==='year') return (b.year||0)-(a.year||0);
-          const A = String(a[sortBy]||'').toLowerCase();
-          const B = String(b[sortBy]||'').toLowerCase();
-          return A.localeCompare(B);
-        });
-
-      items.forEach(b=>{
-        const isSaved = !!state.bookmarks[`book:${b.id}`];
-        const card = el('div', {class:'book'});
-        card.append(
-          el('div', {class:'tags'},
-            el('span', {class:'tag'}, b.category),
-            ...(b.tags||[]).map(t=> el('span', {class:'tag'}, t))
-          ),
-          el('h4', {}, b.title),
-          el('div', {class:'meta'}, `${b.author} · ${b.year||'—'}`),
-          el('div', {class:'actions'},
-            (()=>{
-              const bb = el('button', {class:'btn ghost'}, isSaved? 'Saved ✓' : 'Bookmark');
-              bb.addEventListener('click', ()=>{
-                state.bookmarks[`book:${b.id}`] = { type:'book', id:b.id, title:b.title, when: Date.now() };
-                save();
-                bb.textContent='Saved ✓';
-              });
-              return bb;
-            })(),
-            (()=>{
-              const rb = el('button', {class:'btn'}, 'Read Summary');
-              rb.addEventListener('click', ()=>{
-                openSummaryPopup(b);
-              });
-              return rb;
-            })()
-          )
-        );
-        grid.appendChild(card);
-      });
-    }
-
+   
     // Popup for book summary
     function openSummaryPopup(book){
       const overlay = el('div',{style:'position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:1000'});
