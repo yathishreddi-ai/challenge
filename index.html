@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Indian Law Library — Constitution, Acts & Issue Finder</title>
-  <meta name="description" content="Comprehensive single-file educational dashboard: Full Part III (Articles 12–35) text, major Acts, summaries, Issue Finder that maps user activity to Articles and Acts to increase public legal awareness." />
+  <title>Indian Law Library — Full Acts Importer & Issue Finder</title>
+  <meta name="description" content="Educational dashboard: Part III rights, major Acts, and a Full-Acts manager that lets you import/store full bare-act sections locally. Use to build an offline law library." />
   <style>
     :root{--bg:#071126;--panel:#0d1b2a;--soft:#112536;--muted:#98a6bf;--text:#e6eef8;--accent:#3fb0ff;--accent2:#6de3c6;--radius:12px}
     [data-theme='light']{--bg:#f7fafc;--panel:#ffffff;--soft:#f1f5f9;--muted:#475569;--text:#071526;--accent:#2563eb;--accent2:#059669}
@@ -20,11 +20,13 @@
     textarea{width:100%;min-height:120px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.04);background:var(--soft);color:var(--text)}
     .btn{padding:8px 12px;border-radius:10px;border:0;background:linear-gradient(135deg,var(--accent),#7bb6ff);color:#052019;cursor:pointer}
     .btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.06)}
-    .grid{display:grid;grid-template-columns:1fr 440px;gap:16px}
-    .list{max-height:360px;overflow:auto}
+    .grid{display:grid;grid-template-columns:1fr 480px;gap:16px}
+    .list{max-height:380px;overflow:auto}
     .article, .act, .book{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.04);margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,.01), transparent)}
     .tag{display:inline-block;padding:4px 8px;border-radius:8px;background:var(--soft);color:var(--muted);font-size:12px;margin-right:6px}
     footer{font-size:12px;color:var(--muted);padding:10px}
+    code{background:rgba(0,0,0,.2);padding:2px 6px;border-radius:6px;color:var(--muted)}
+    .small{font-size:12px;color:var(--muted)}
     @media(max-width:980px){.app{grid-template-columns:1fr}.grid{grid-template-columns:1fr}}
   </style>
 </head>
@@ -35,42 +37,46 @@
         <div class="logo" aria-hidden></div>
         <div>
           <div style="font-weight:700">Indian Law Library</div>
-          <div class="sub">Free educational resource — Constitution & major Acts</div>
+          <div class="sub">Now supports importing full Acts (JSON) with sections saved locally.</div>
         </div>
       </div>
 
       <div style="margin-top:8px;margin-bottom:8px">
-        <div style="font-weight:600">Contents</div>
-        <div class="sub">Tap items to jump</div>
+        <div style="font-weight:600">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <button id="downloadSample" class="btn ghost">Download Sample Act JSON</button>
+          <label class="btn ghost" style="display:inline-block;cursor:pointer">Import Full Act (JSON)
+            <input id="fileInput" type="file" accept="application/json" style="display:none" />
+          </label>
+          <button id="viewLibrary" class="btn ghost">View Full-Acts Library</button>
+        </div>
       </div>
 
-      <nav style="display:flex;flex-direction:column;gap:8px">
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,.04);margin:10px 0" />
+      <div style="font-weight:600">Contents</div>
+      <nav style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
         <a href="#issueFinder" class="sub">Issue Finder</a>
-        <a href="#constitution" class="sub">Constitution — Articles 12–35 (Full)</a>
-        <a href="#acts" class="sub">Major Acts (IPC, CrPC, Evidence, etc.)</a>
-        <a href="#books" class="sub">Law Books Collection</a>
-        <a href="#resources" class="sub">Official Resources</a>
+        <a href="#constitution" class="sub">Constitution (Articles 12–35)</a>
+        <a href="#acts" class="sub">Major Acts</a>
+        <a href="#fullActs" class="sub">Full Acts Library</a>
+        <a href="#books" class="sub">Law Books</a>
       </nav>
 
       <hr style="border:none;border-top:1px solid rgba(255,255,255,.04);margin:10px 0" />
-      <div style="font-weight:600">Purpose</div>
-      <div class="sub">Raise awareness about rights, reduce illegal activity by informing citizens what legal protections and remedies exist.</div>
-
-      <hr style="border:none;border-top:1px solid rgba(255,255,255,.04);margin:10px 0" />
-      <div style="font-weight:600">License</div>
-      <div class="sub">MIT-style — educational only. Not legal advice.</div>
+      <div style="font-weight:600">Notes</div>
+      <div class="sub">This app stores imported acts locally in your browser (localStorage). You can export/import later. Embedding every Act's full text in a single HTML makes the file very large — instead, import the acts you need using the button above.</div>
     </aside>
 
     <main>
       <section class="card" style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div style="font-size:18px;font-weight:700">Issue Finder — Know your rights</div>
-          <div class="sub">Type the activity you experienced and the dashboard suggests Articles, Acts & steps to take.</div>
+          <div style="font-size:18px;font-weight:700">Issue Finder & Full-Acts Manager</div>
+          <div class="sub">Analyze an activity; import full Acts (sections) to build an offline reference library.</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <div style="background:var(--soft);padding:8px;border-radius:8px;display:flex;gap:8px;align-items:center">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle></svg>
-            <input id="globalSearch" placeholder="Search articles, acts, or books..." style="width:360px;" />
+            <input id="globalSearch" placeholder="Search articles, acts, books or full-acts..." style="width:360px;" />
           </div>
           <button id="themeToggle" class="btn ghost">Toggle Theme</button>
         </div>
@@ -81,8 +87,8 @@
           <section id="issueFinder" class="card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
               <div>
-                <div style="font-weight:700">Describe the activity</div>
-                <div class="sub">Example: "Police entered my home and arrested me" or "My employer did not pay salary"</div>
+                <div style="font-weight:700">Describe the activity to analyze</div>
+                <div class="sub">Example: "Police entered my home and arrested me" or "Online impersonation and fraud"</div>
               </div>
               <div style="display:flex;gap:8px">
                 <button id="analyzeBtn" class="btn">Analyze</button>
@@ -97,7 +103,7 @@
             <div style="display:flex;justify-content:space-between;align-items:center">
               <div>
                 <div style="font-weight:700">Constitution — Articles 12 to 35 (Part III)</div>
-                <div class="sub">Full text (concise) and simple guidance.</div>
+                <div class="sub">Full concise text with guidance; these are the core Fundamental Rights used to prevent illegal actions.</div>
               </div>
               <div>
                 <button id="exportConst" class="btn ghost">Export Articles</button>
@@ -113,11 +119,25 @@
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
               <div>
                 <div style="font-weight:700">Major Acts & Key Sections</div>
-                <div class="sub">Bare act links + important sections to check</div>
+                <div class="sub">Quick access to common Acts. Use 'Import Full Act' to add all sections for offline lookup.</div>
               </div>
               <button id="exportActs" class="btn ghost">Export Acts</button>
             </div>
             <div id="actsList" class="list" style="margin-top:8px"></div>
+          </section>
+
+          <section id="fullActs" class="card" style="margin-top:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div>
+                <div style="font-weight:700">Full Acts Library</div>
+                <div class="sub">Imported Acts (sections stored locally). Click an Act to view its sections.</div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button id="exportFullActs" class="btn ghost">Export Full-Acts JSON</button>
+                <button id="clearFullActs" class="btn ghost">Clear Full-Acts</button>
+              </div>
+            </div>
+            <div id="fullActsList" class="list" style="margin-top:8px"></div>
           </section>
 
           <section id="books" class="card" style="margin-top:12px">
@@ -131,89 +151,76 @@
             <div style="margin-top:8px"><input id="bookSearch" placeholder="Filter books..." style="width:100%;background:var(--soft);padding:8px;border-radius:8px;border:0;color:var(--text)" /></div>
             <div id="booksGrid" class="list" style="margin-top:8px"></div>
           </section>
-
-          <section id="resources" class="card" style="margin-top:12px">
-            <div style="font-weight:700">Official Resources</div>
-            <div class="sub">Verify laws using official sources</div>
-            <ul style="color:var(--muted);margin-top:8px">
-              <li><a href="https://www.indiacode.nic.in" target="_blank">India Code (Bare Acts)</a></li>
-              <li><a href="https://legislative.gov.in" target="_blank">Legislative Department</a></li>
-              <li><a href="https://www.sci.gov.in" target="_blank">Supreme Court of India</a></li>
-              <li><a href="https://ecourts.gov.in" target="_blank">eCourts Services</a></li>
-            </ul>
-          </section>
         </aside>
       </div>
 
       <footer style="margin-top:12px" class="card">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div class="sub">Free to use — Educational only. Not legal advice.</div>
-          <div class="sub">You can export articles, acts, books for offline study.</div>
+          <div class="sub">Free to use — Educational only. Not legal advice. Import acts only from trusted sources.</div>
+          <div class="sub">Imported acts are stored locally in your browser's storage.</div>
         </div>
       </footer>
     </main>
   </div>
 
   <script>
-    // ---------- Full Articles (12-35) — concise/verified public-text style summaries ----------
+    // ---------- Core data (unchanged basics) ----------
     const ARTICLES_FULL = [
-      {id:12, title:'Article 12', text:`In Part III 'State' includes Government and Parliament of India, the Government and legislature of each State and all local authorities and other authorities within the territory of India or under the control of the Government of India.`},
-      {id:13, title:'Article 13', text:`All laws in force before the commencement of this Constitution that are inconsistent with the provisions of Part III shall, to the extent of such inconsistency, be void. The State shall not make any law that takes away or abridges the rights conferred by Part III.`},
-      {id:14, title:'Article 14', text:`The State shall not deny to any person equality before the law or the equal protection of the laws within the territory of India.`},
-      {id:15, title:'Article 15', text:`The State shall not discriminate against any citizen on grounds only of religion, race, caste, sex, place of birth or any of them; special provisions may be made for women, children and backward classes.`},
-      {id:16, title:'Article 16', text:`There shall be equality of opportunity for all citizens in matters relating to employment or appointment to any office under the State.`},
-      {id:17, title:'Article 17', text:`Untouchability is abolished and its practice in any form is forbidden.`},
-      {id:18, title:'Article 18', text:`No title shall be conferred by the State except military or academic distinctions.`},
-      {id:19, title:'Article 19', text:`Protection of certain rights regarding freedom of speech and expression, assembly, association, movement, residence and profession, subject to reasonable restrictions.`},
-      {id:20, title:'Article 20', text:`Protection in respect of conviction for offences — no ex post facto laws, no double jeopardy, no self-incrimination.`},
-      {id:21, title:'Article 21', text:`Protection of life and personal liberty — no person shall be deprived of his life or personal liberty except according to procedure established by law.`},
-      {id:22, title:'Article 22', text:`Protection against arbitrary arrest and detention — right to be informed of grounds, right to consult counsel, and other procedural safeguards.`},
-      {id:23, title:'Article 23', text:`Traffic in human beings, begar and other similar forms of forced labour are prohibited.`},
-      {id:24, title:'Article 24', text:`No child below the age of fourteen years shall be employed to work in any factory or mine or engaged in any hazardous employment.`},
-      {id:25, title:'Article 25', text:`Freedom of conscience and free profession, practice and propagation of religion, subject to public order, morality and health.`},
-      {id:26, title:'Article 26', text:`Freedom to manage religious affairs.`},
-      {id:27, title:'Article 27', text:`Freedom as to payment of taxes for promotion of any particular religion.`},
-      {id:28, title:'Article 28', text:`Freedom as to attendance at religious instruction or religious worship in certain educational institutions.`},
-      {id:29, title:'Article 29', text:`Protection of interests of minorities — language, script and culture; right to conserve.`},
-      {id:30, title:'Article 30', text:`Right of minorities to establish and administer educational institutions.`},
-      {id:31, title:'Article 31', text:`(Repealed) Compensation for property taken for public purposes is governed by other provisions.`},
-      {id:32, title:'Article 32', text:`Right to move the Supreme Court for enforcement of fundamental rights; power to issue writs such as habeas corpus, mandamus, prohibition, quo warranto and certiorari.`},
-      {id:33, title:'Article 33', text:`Power of Parliament to modify the application of fundamental rights to forces or intelligence services.`},
-      {id:34, title:'Article 34', text:`Restriction on rights conferred by Part III while martial law is in force in any area.`},
-      {id:35, title:'Article 35', text:`Legislative power of Parliament to give effect to the provisions of Part III.`}
+      {id:12, title:'Article 12', text:'In Part III "State" includes Government and Parliament of India...'},
+      {id:13, title:'Article 13', text:'All laws in force before the commencement of this Constitution that are inconsistent with the provisions of Part III shall, to the extent of such inconsistency, be void.'},
+      {id:14, title:'Article 14', text:'Equality before law and equal protection.'},
+      {id:15, title:'Article 15', text:'Prohibition of discrimination.'},
+      {id:16, title:'Article 16', text:'Equality of opportunity in public employment.'},
+      {id:17, title:'Article 17', text:'Abolition of untouchability.'},
+      {id:18, title:'Article 18', text:'Abolition of titles.'},
+      {id:19, title:'Article 19', text:'Right to freedom of speech & other freedoms.'},
+      {id:20, title:'Article 20', text:'Protection in respect of conviction for offences.'},
+      {id:21, title:'Article 21', text:'Protection of life and personal liberty.'},
+      {id:22, title:'Article 22', text:'Protection against arbitrary arrest and detention.'},
+      {id:23, title:'Article 23', text:'Prohibition of trafficking and forced labour.'},
+      {id:24, title:'Article 24', text:'No child below 14 employed in hazardous work.'},
+      {id:25, title:'Article 25', text:'Freedom of conscience and religion.'},
+      {id:26, title:'Article 26', text:'Freedom to manage religious affairs.'},
+      {id:27, title:'Article 27', text:'Freedom as to payment of taxes for promotion of any particular religion.'},
+      {id:28, title:'Article 28', text:'Freedom as to attendance at religious instruction in certain institutions.'},
+      {id:29, title:'Article 29', text:'Protection of interests of minorities.'},
+      {id:30, title:'Article 30', text:'Rights of minorities to establish institutions.'},
+      {id:31, title:'Article 31', text:'(Repealed) Compensation for property taken for public purposes.'},
+      {id:32, title:'Article 32', text:'Right to constitutional remedies — move the Supreme Court.'},
+      {id:33, title:'Article 33', text:'Power of Parliament to modify rights for forces.'},
+      {id:34, title:'Article 34', text:'Restriction on rights during martial law.'},
+      {id:35, title:'Article 35', text:'Laws giving effect to provisions of Part III.'}
     ];
 
-    // ---------- Major Acts & key sections (summary + link to IndiaCode) ----------
     const ACTS = [
-      {code:'IPC', title:'Indian Penal Code, 1860', url:'https://www.indiacode.nic.in/handle/123456789/2263', summary:'Definitions and general principles of criminal liability. Key sections: 302 (murder), 376 (rape), 420 (cheating), 406 (criminal breach of trust).'},
-      {code:'CrPC', title:'Code of Criminal Procedure, 1973', url:'https://www.indiacode.nic.in/handle/123456789/2188', summary:'Procedure for investigation, arrest, bail, trial and appeals. Key: Sections on arrest, bail, charge-sheet.'},
-      {code:'Evidence', title:'Indian Evidence Act, 1872', url:'https://www.indiacode.nic.in/handle/123456789/1891', summary:'Rules of admissibility of evidence in Indian courts.'},
-      {code:'CPC', title:'Code of Civil Procedure, 1908', url:'https://www.indiacode.nic.in/handle/123456789/2221', summary:'Procedure governing civil litigation.'},
-      {code:'POCSO', title:'Protection of Children from Sexual Offences Act, 2012', url:'https://www.indiacode.nic.in/', summary:'Special provisions to protect children from sexual offences.'},
-      {code:'DV', title:'Protection of Women from Domestic Violence Act, 2005', url:'https://www.indiacode.nic.in/', summary:'Civil remedies for victims of domestic violence.'},
-      {code:'IT', title:'Information Technology Act, 2000', url:'https://www.indiacode.nic.in/', summary:'Cyber offences and electronic evidence.'}
+      {code:'IPC', title:'Indian Penal Code, 1860', url:'https://www.indiacode.nic.in/', summary:'General criminal law — sections include 302 (murder), 376 (rape), 420 (cheating).'},
+      {code:'CrPC', title:'Code of Criminal Procedure, 1973', url:'https://www.indiacode.nic.in/', summary:'Procedure for investigation, arrest, bail, trial.'},
+      {code:'Evidence', title:'Indian Evidence Act, 1872', url:'https://www.indiacode.nic.in/', summary:'Admissibility of evidence.'},
+      {code:'CPC', title:'Code of Civil Procedure, 1908', url:'https://www.indiacode.nic.in/', summary:'Civil procedure.'},
+      {code:'POCSO', title:'Protection of Children from Sexual Offences Act, 2012', url:'https://www.indiacode.nic.in/', summary:'Child protection.'},
+      {code:'DV', title:'Protection of Women from Domestic Violence Act, 2005', url:'https://www.indiacode.nic.in/', summary:'Civil remedies for domestic violence.'},
+      {code:'IT', title:'Information Technology Act, 2000', url:'https://www.indiacode.nic.in/', summary:'Cyber offences.'}
     ];
 
-    // ---------- Default Books (expanded) ----------
     const DEFAULT_BOOKS = [
       {id:1,title:'Constitution of India — Bare Act (Official)',author:'Government of India',year:2024,link:'https://www.indiacode.nic.in/'},
       {id:2,title:'Indian Penal Code — Bare Act',author:'Government of India',year:2024,link:'https://www.indiacode.nic.in/'},
       {id:3,title:'Code of Criminal Procedure — Bare Act',author:'Government of India',year:2024,link:'https://www.indiacode.nic.in/'},
       {id:4,title:'Indian Evidence Act — Bare Act',author:'Government of India',year:2024,link:'https://www.indiacode.nic.in/'},
-      {id:5,title:'V.N. Shukla — Constitution of India (Commentary)',author:'V.N. Shukla',year:2023,link:'#'},
-      {id:6,title:'Ratanlal & Dhirajlal — The Code of Criminal Procedure',author:'Ratanlal & Dhirajlal',year:2022,link:'#'},
-      {id:7,title:'K.D. Gaur — Textbook on Indian Penal Code',author:'K.D. Gaur',year:2020,link:'#'}
+      {id:5,title:'V.N. Shukla — Constitution (Commentary)',author:'V.N. Shukla',year:2023,link:'#'}
     ];
 
-    // ---------- State & persistence ----------
+    // ---------- Full Acts storage (sections) ----------
+    // Structure: state.fullActs = { 'IPC': {code:'IPC', title:'Indian Penal Code', sections: [{s:'302',title:'Murder',text:'...'}, ...] }, ... }
     const state = {
       theme: localStorage.getItem('theme') || (matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'),
       books: JSON.parse(localStorage.getItem('books')||'null') || DEFAULT_BOOKS,
       bookmarks: JSON.parse(localStorage.getItem('bookmarks')||'{}'),
-      notes: JSON.parse(localStorage.getItem('notes')||'{}')
+      notes: JSON.parse(localStorage.getItem('notes')||'{}'),
+      fullActs: JSON.parse(localStorage.getItem('fullActs')||'{}')
     };
 
-    function save(){ localStorage.setItem('books', JSON.stringify(state.books)); localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks)); localStorage.setItem('notes', JSON.stringify(state.notes)); localStorage.setItem('theme', state.theme); }
+    function save(){ localStorage.setItem('books', JSON.stringify(state.books)); localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks)); localStorage.setItem('notes', JSON.stringify(state.notes)); localStorage.setItem('theme', state.theme); localStorage.setItem('fullActs', JSON.stringify(state.fullActs)); }
 
     // ---------- Utilities ----------
     function el(tag,attrs={},...children){ const n=document.createElement(tag); for(const k in attrs){ if(k==='class') n.className=attrs[k]; else if(k==='html') n.innerHTML=attrs[k]; else n.setAttribute(k,attrs[k]); } children.forEach(c=>{ if(c==null) return; n.appendChild(typeof c==='string'?document.createTextNode(c):c); }); return n; }
@@ -227,66 +234,99 @@
     }); }
 
     function renderActs(){ const wrap=document.getElementById('actsList'); wrap.innerHTML=''; ACTS.forEach(act=>{
-      const node = el('div',{class:'act'}, el('div',{style:'font-weight:700'}, `${act.code} — ${act.title}`), el('div',{class:'sub'}, act.summary), el('div',{style:'margin-top:8px;display:flex;gap:8px'}, el('a',{href:act.url, target:'_blank', class:'btn'}, 'Open Bare Act'), el('button',{class:'btn ghost', onclick:()=> bookmarkAct(act)}, 'Bookmark')));
+      const node = el('div',{class:'act'}, el('div',{style:'font-weight:700'}, `${act.code} — ${act.title}`), el('div',{class:'sub'}, act.summary), el('div',{style:'margin-top:8px;display:flex;gap:8px'}, el('a',{href:act.url, target:'_blank', class:'btn'}, 'Open Bare Act'), el('button',{class:'btn ghost', onclick:()=>bookmarkAct(act)}, 'Bookmark')));
       wrap.appendChild(node);
     }); }
 
     function renderBooks(filter=''){ const wrap=document.getElementById('booksGrid'); wrap.innerHTML=''; const f=(filter||'').trim().toLowerCase(); state.books.filter(b=> !f || (b.title+b.author+(b.tags||'')).toLowerCase().includes(f)).forEach(b=>{
-      const node = el('div',{class:'book'}, el('div',{style:'font-weight:700'}, b.title), el('div',{class:'sub'}, `${b.author || ''} ${b.year? '· '+b.year: ''}`), el('div',{style:'margin-top:8px;display:flex;gap:8px'}, el('a',{href:b.link||'#',target:'_blank',class:'btn'}, 'Open'), el('button',{class:'btn ghost',onclick:()=>{ state.bookmarks[`book:${b.id}`] = {type:'book', id:b.id, title:b.title, when:Date.now()}; save(); renderBookmarks(); }}, 'Bookmark')));
+      const node = el('div',{class:'book'}, el('div',{style:'font-weight:700'}, b.title), el('div',{class:'sub'}, `${b.author || ''} ${b.year? '· '+b.year: ''}`), el('div',{style:'margin-top:8px;display:flex;gap:8px'}, el('a',{href:b.link||'#',target:'_blank',class:'btn'}, 'Open'), el('button',{class:'btn ghost',onclick:()=>{ state.bookmarks[`book:${b.id}`] = {type:'book', id:b.id, title:b.title, when:Date.now()}; save(); alert('Bookmarked: '+b.title); }}, 'Bookmark')));
       wrap.appendChild(node);
     }); }
 
-    function renderBookmarks(){ const wrap=document.getElementById('booksGrid') /* keep books grid available */; const list = document.getElementById('booksGrid'); // bookmarks panel is not separate here; we'll show count in sidebar
-      const bkEl = document.getElementById('booksGrid'); // nothing extra
-      const bl = document.getElementById('resources'); // no-op
-      const bm = document.getElementById('actsList'); // just to avoid unused
-      // also update bookmark count in sidebar header
-      const side = document.querySelector('.sidebar'); if(side){ const elcount = side.querySelector('.sub'); if(elcount){ /* no change */ } }
-    }
+    function renderFullActsList(){ const wrap=document.getElementById('fullActsList'); wrap.innerHTML=''; const keys = Object.keys(state.fullActs||{}); if(!keys.length) { wrap.innerHTML = '<div class="sub">No full Acts imported yet. Use Import Full Act (JSON) above to add.</div>'; return };
+      keys.forEach(code=>{
+        const act = state.fullActs[code]; const node = el('div',{class:'act'}, el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:700'}, `${act.code} — ${act.title}`), el('div',{class:'sub'}, `${act.sections ? act.sections.length : 0} sections imported`)), el('div',{}, el('button',{class:'btn', onclick:()=> viewActSections(act.code)}, 'View Sections'), el('button',{class:'btn ghost', onclick:()=> exportActJSON(act.code)}, 'Export'))));
+        wrap.appendChild(node);
+      }); }
 
     // ---------- Show Article panel ----------
-    function showArticlePanel(id){ const a = ARTICLES_FULL.find(x=>x.id===id); if(!a) return; const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'}); const box = el('div',{style:'width:min(900px,96vw);max-height:90vh;overflow:auto;background:var(--panel);padding:18px;border-radius:12px'});
+    function showArticlePanel(id){ const a = ARTICLES_FULL.find(x=>x.id===id); if(!a) return; const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'}); const box = el('div',{style:'width:min(920px,96vw);max-height:90vh;overflow:auto;background:var(--panel);padding:18px;border-radius:12px'});
       box.appendChild(el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:800'}, `Article ${a.id} — ${a.title}`), el('div',{class:'sub', style:'margin-top:6px'}, a.text)), el('div',{}, el('button',{class:'btn ghost',onclick:()=>overlay.remove()}, 'Close'))));
-      // guidance + legal steps (non-advice)
-      box.appendChild(el('div',{style:'margin-top:12px'}, el('div',{style:'font-weight:700'}, 'What this means (plain language)'), el('div',{class:'sub'}, plainLanguageForArticle(a.id))));
-      box.appendChild(el('div',{style:'margin-top:12px'}, el('div',{style:'font-weight:700'}, 'Possible steps to take (educational)'), el('ol',{class:'sub', style:'padding-left:18px'}, el('li',{}, 'Document facts and collect evidence (photos, witness names).'), el('li',{}, 'Approach local police station or legal aid clinic if urgent.'), el('li',{}, 'Consider filing writs (Art.32/226) or statutory complaints; seek lawyer assistance.'))));
+      // guidance + steps
+      box.appendChild(el('div',{style:'margin-top:12px'}, el('div',{style:'font-weight:700'}, 'Plain-language summary'), el('div',{class:'sub'}, plainLanguageForArticle(a.id))));
+      box.appendChild(el('div',{style:'margin-top:12px'}, el('div',{style:'font-weight:700'}, 'Educational next steps'), el('ol',{class:'sub', style:'padding-left:18px'}, el('li',{}, 'Collect evidence, photos and witness details.'), el('li',{}, 'Contact local police or legal aid for urgent protection.'), el('li',{}, 'Seek a lawyer or legal clinic for filing writs or complaints.'))));
       overlay.appendChild(box); document.body.appendChild(overlay);
     }
 
-    function plainLanguageForArticle(id){ switch(id){
-      case 14: return 'Article 14 guarantees that everyone must be treated equally by law. If a government action singles out someone without good reason, this right can be used.';
-      case 19: return 'Article 19 protects freedoms like speech and assembly but allows reasonable restrictions for safety and public order.';
-      case 21: return 'Article 21 protects life and personal liberty — it covers fair procedures, safety, and basic dignity.';
-      case 32: return 'Article 32 allows moving the Supreme Court directly if a fundamental right is violated.';
-      default: return 'This article sets a constitutional protection; use the guidance panel for steps and consider legal aid.';
-    } }
+    function plainLanguageForArticle(id){ switch(id){ case 14: return 'Article 14 guarantees equal treatment under law.'; case 19: return 'Article 19 protects freedoms such as speech, assembly and movement.'; case 21: return 'Article 21 protects life and personal liberty including dignity and due process.'; case 32: return 'Article 32 allows approach to the Supreme Court for enforcement of fundamental rights.'; default: return 'General constitutional protection. Use as guidance and seek legal aid.'; } }
 
     // ---------- Analyze issue ----------
     function analyzeIssue(text){ const tokens = tokenize(text);
-      // score articles
       const artScores = ARTICLES_FULL.map(a=> ({...a, score: scoreMatch([a.id, a.title].concat(a.text.split(/[^a-z0-9]+/i)), tokens)})).sort((a,b)=>b.score-a.score);
-      // score acts
       const actScores = ACTS.map(act=> ({...act, score: scoreMatch([act.code, act.title].concat(act.summary.split(/[^a-z0-9]+/i)), tokens)})).sort((a,b)=>b.score-a.score);
-      // score books
       const bookScores = state.books.map(b=> ({...b, score: scoreMatch([b.title,b.author].concat(b.keywords||[]), tokens)})).sort((a,b)=>b.score-b.score);
 
       const out = document.getElementById('analysisResults'); out.innerHTML='';
       out.appendChild(el('div',{}, el('div',{style:'font-weight:700'}, 'Suggested Articles')));
       const topArts = artScores.filter(a=>a.score>0).slice(0,8);
       if(topArts.length){ topArts.forEach(a=> out.appendChild(el('div',{class:'article'}, el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:700'}, `Article ${a.id} — ${a.title}`), el('div',{class:'sub'}, a.text)), el('div',{}, el('button',{class:'btn', onclick:()=> showArticlePanel(a.id)}, 'Read')))))); }
-      else out.appendChild(el('div',{class:'sub'}, 'No clear Article match — try using keywords like "arrest", "assault", "cheating", "domestic".'));
+      else out.appendChild(el('div',{class:'sub'}, 'No Article matched. Try clearer keywords.'));
 
       if(actScores.some(x=>x.score>0)){ out.appendChild(el('div',{style:'font-weight:700;margin-top:10px'}, 'Relevant Acts')); actScores.filter(x=>x.score>0).slice(0,6).forEach(act=> out.appendChild(el('div',{class:'act'}, el('div',{style:'font-weight:700'}, `${act.code} — ${act.title}`), el('div',{class:'sub'}, act.summary), el('div',{}, el('a',{href:act.url,target:'_blank',class:'btn'}, 'Open Act')))) ); }
 
       if(bookScores.some(b=>b.score>0)){ out.appendChild(el('div',{style:'font-weight:700;margin-top:10px'}, 'Suggested Readings')); bookScores.filter(b=>b.score>0).slice(0,6).forEach(b=> out.appendChild(el('div',{class:'book'}, el('div',{style:'font-weight:700'}, b.title), el('div',{class:'sub'}, b.author || ''), el('div',{}, el('a',{href:b.link||'#',target:'_blank',class:'btn'}, 'Open'))))); }
 
+      // search in fullActs text as well (if imported)
+      const fullActMatches = [];
+      Object.values(state.fullActs||{}).forEach(act=>{
+        (act.sections||[]).forEach(sec=>{
+          const combined = (sec.section+' '+sec.title+' '+sec.text).toLowerCase(); if(tokens.some(t=> combined.includes(t))){ fullActMatches.push({actCode:act.code, section:sec.section, title:sec.title, text:sec.text}); }
+        });
+      });
+      if(fullActMatches.length){ out.appendChild(el('div',{style:'font-weight:700;margin-top:10px'}, 'Matches inside imported Acts')); fullActMatches.slice(0,12).forEach(m=> out.appendChild(el('div',{class:'act'}, el('div',{style:'font-weight:700'}, `${m.actCode} §${m.section} — ${m.title}`), el('div',{class:'sub'}, m.text.slice(0,400)+'...'), el('div',{}, el('button',{class:'btn',onclick:()=> openSectionDetail(m.actCode,m.section)}, 'Open Section'))))); }
+
       const found = Array.from(new Set(tokens)).slice(0,18); if(found.length) out.appendChild(el('div',{style:'margin-top:10px'}, el('div',{style:'font-weight:700'}, 'Extracted keywords'), el('div',{class:'sub'}, found.join(', '))));
     }
 
-    // ---------- Bookmark act ----------
+    function openSectionDetail(actCode, section){ const act = state.fullActs[actCode]; if(!act) return alert('Act not found'); const sec = (act.sections||[]).find(s=>String(s.section)===String(section)); if(!sec) return alert('Section not found'); const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'}); const box = el('div',{style:'width:min(920px,96vw);max-height:90vh;overflow:auto;background:var(--panel);padding:18px;border-radius:12px'});
+      box.appendChild(el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:800'}, `${act.code} §${sec.section} — ${sec.title}`), el('div',{class:'sub', style:'margin-top:6px'}, sec.text)), el('div',{}, el('button',{class:'btn ghost',onclick:()=>overlay.remove()}, 'Close')))); overlay.appendChild(box); document.body.appendChild(overlay);
+    }
+
+    // ---------- Full Acts import/export/management ----------
+    document.getElementById('fileInput').addEventListener('change', (e)=>{
+      const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ()=>{ try{ const obj = JSON.parse(reader.result); // expect either a single act or an object of acts
+          if(Array.isArray(obj)){ // array of acts
+            obj.forEach(a=> { if(a.code) state.fullActs[a.code]=a; });
+          } else if(obj.code){ state.fullActs[obj.code]=obj; } else { // maybe object map
+            Object.assign(state.fullActs, obj);
+          }
+          save(); renderFullActsList(); alert('Imported successfully.');
+        }catch(err){ alert('Invalid JSON: '+err.message); }
+      }; reader.readAsText(f);
+    });
+
+    document.getElementById('downloadSample').addEventListener('click', ()=>{
+      const sample = { code:'IPC', title:'Indian Penal Code, 1860', sections:[ {section:'302', title:'Murder', text:'Whoever commits murder shall be punished with death or imprisonment for life...'}, {section:'420', title:'Cheating and dishonestly inducing delivery of property', text:'Whoever cheats and thereby dishonestly induces any person to deliver any property...'} ] };
+      exportJSON('sample-act-ipc.json', sample);
+    });
+
+    function exportActJSON(code){ const act = state.fullActs[code]; if(!act) return alert('Act not found'); exportJSON((act.code||'act')+'.json', act); }
+    document.getElementById('exportFullActs').addEventListener('click', ()=>{ exportJSON('full-acts-library.json', state.fullActs); });
+    document.getElementById('clearFullActs').addEventListener('click', ()=>{ if(confirm('Clear all imported full Acts from local storage?')){ state.fullActs={}; save(); renderFullActsList(); } });
+
+    function viewActSections(code){ const act = state.fullActs[code]; if(!act) return alert('Act not found'); const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'}); const box = el('div',{style:'width:min(1000px,96vw);max-height:90vh;overflow:auto;background:var(--panel);padding:18px;border-radius:12px'});
+      box.appendChild(el('div',{style:'display:flex;justify-content:space-between;align-items:center'}, el('div',{}, el('div',{style:'font-weight:800'}, `${act.code} — ${act.title}`), el('div',{class:'sub', style:'margin-top:6px'}, `${act.sections?act.sections.length:0} sections`)), el('div',{}, el('button',{class:'btn ghost',onclick:()=>overlay.remove()}, 'Close'))));
+      const list = el('div',{style:'margin-top:12px'});
+      (act.sections||[]).forEach(sec=> list.appendChild(el('div',{class:'article'}, el('div',{style:'font-weight:700'}, `§${sec.section} — ${sec.title}`), el('div',{class:'sub'}, sec.text.slice(0,800)+'...'), el('div',{}, el('button',{class:'btn', onclick:()=> openSectionDetail(act.code, sec.section)}, 'Open')))));
+      box.appendChild(list); overlay.appendChild(box); document.body.appendChild(overlay);
+    }
+
+    function exportJSON(filename,data){ const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1500); }
+
+    // ---------- Bookmarks & acts ----------
     function bookmarkAct(act){ state.bookmarks[`act:${act.code}`] = { type:'act', code:act.code, title:act.title, when:Date.now() }; save(); alert('Bookmarked '+act.code); }
 
-    // ---------- Add book modal ----------
+    // ---------- Add book ----------
     function openAddBook(){ const overlay = el('div',{style:'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:999'}); const box = el('div',{style:'width:min(720px,96vw);background:var(--panel);padding:14px;border-radius:12px'});
       box.innerHTML = `<h3 style="margin:0 0 6px">Add a Law Book</h3>
         <div class="sub">Stored locally in your browser</div>
@@ -308,22 +348,20 @@
         state.books.push(nb); save(); renderBooks(); overlay.remove();
       }); }
 
-    // ---------- Exports ----------
-    function exportJSON(filename,data){ const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1500); }
-
     // ---------- Wiring ----------
-    document.getElementById('analyzeBtn').addEventListener('click', ()=>{ const t = document.getElementById('issueText').value; if(!t.trim()){ alert('Please describe the activity/issue to analyze.'); return } analyzeIssue(t); });
+    document.getElementById('analyzeBtn').addEventListener('click', ()=>{ const t = document.getElementById('issueText').value; if(!t.trim()){ alert('Please describe the activity/issue.'); return } analyzeIssue(t); });
     document.getElementById('clearIssue').addEventListener('click', ()=>{ document.getElementById('issueText').value=''; document.getElementById('analysisResults').innerHTML=''; });
-    document.getElementById('bookSearch').addEventListener('input', (e)=> renderBooks(e.target.value));
+    document.getElementById('bookSearch').addEventListener('input',(e)=> renderBooks(e.target.value));
     document.getElementById('addBookBtn').addEventListener('click', openAddBook);
     document.getElementById('exportConst').addEventListener('click', ()=> exportJSON('articles_part3.json', ARTICLES_FULL));
     document.getElementById('exportActs').addEventListener('click', ()=> exportJSON('major_acts.json', ACTS));
+    document.getElementById('viewLibrary').addEventListener('click', ()=> renderFullActsList());
 
     document.getElementById('themeToggle').addEventListener('click', ()=>{ state.theme = state.theme==='light' ? 'dark' : 'light'; applyTheme(); save(); });
     function applyTheme(){ document.documentElement.setAttribute('data-theme', state.theme); }
 
     // ---------- Init ----------
-    function init(){ applyTheme(); renderArticlesFull(); renderActs(); renderBooks(); }
+    function init(){ applyTheme(); renderArticlesFull(); renderActs(); renderBooks(); renderFullActsList(); }
     init();
   </script>
 </body>
