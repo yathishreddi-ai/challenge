@@ -67,6 +67,7 @@
       border-radius: var(--radius);
       padding: 16px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
     }
   </style>
 </head>
@@ -96,18 +97,26 @@
       </div>
       <h2>Crop Production (in tonnes)</h2>
       <canvas id="cropChart"></canvas>
+
+      <h2>Crop Rates (₹ per kg)</h2>
+      <canvas id="rateChart"></canvas>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // Example crop data
+    // Extended crop data (dummy values for demo)
     const crops = [
       { name: "Wheat", production: 105, rate: 22 },
       { name: "Rice", production: 130, rate: 28 },
-      { name: "Sugarcane", production: 75, rate: 18 },
+      { name: "Maize", production: 60, rate: 20 },
+      { name: "Pulses", production: 25, rate: 85 },
+      { name: "Sugarcane", production: 75, rate: 4 },
       { name: "Cotton", production: 45, rate: 35 },
-      { name: "Maize", production: 60, rate: 20 }
+      { name: "Groundnut", production: 30, rate: 55 },
+      { name: "Jute", production: 20, rate: 40 },
+      { name: "Barley", production: 18, rate: 25 },
+      { name: "Bajra", production: 22, rate: 18 }
     ];
 
     // Update stats
@@ -117,26 +126,41 @@
     const maxRate = crops.reduce((a,b)=> a.rate > b.rate ? a : b);
     document.getElementById("expensiveCrop").textContent = `${maxRate.name} (₹${maxRate.rate}/kg)`;
 
-    // Chart.js bar chart
-    const ctx = document.getElementById("cropChart").getContext("2d");
-    new Chart(ctx, {
+    // Chart.js - Production
+    const ctx1 = document.getElementById("cropChart").getContext("2d");
+    new Chart(ctx1, {
       type: "bar",
       data: {
         labels: crops.map(c=>c.name),
         datasets: [{
           label: "Production (tonnes)",
           data: crops.map(c=>c.production),
-          backgroundColor: ["#4caf50","#2196f3","#ff9800","#9c27b0","#f44336"]
+          backgroundColor: ["#4caf50","#2196f3","#ff9800","#9c27b0","#f44336","#795548","#00bcd4","#8bc34a","#ffc107","#e91e63"]
         }]
       },
       options: {
         responsive: true,
-        plugins: {
-          legend: { display: false }
-        },
-        scales: {
-          y: { beginAtZero: true }
-        }
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    // Chart.js - Rates
+    const ctx2 = document.getElementById("rateChart").getContext("2d");
+    new Chart(ctx2, {
+      type: "bar",
+      data: {
+        labels: crops.map(c=>c.name),
+        datasets: [{
+          label: "Rate (₹/kg)",
+          data: crops.map(c=>c.rate),
+          backgroundColor: ["#009688","#3f51b5","#cddc39","#ff5722","#9c27b0","#607d8b","#ff9800","#4caf50","#2196f3","#e91e63"]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
       }
     });
   </script>
