@@ -1,560 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Indian Law Dashboard — Constitution & Law Books</title>
-  <meta name="description" content="A single-file web dashboard on the Constitution of India, Fundamental Rights, and a curated collection of Indian law books. Built with HTML, CSS, and JS in one file." />
+  <meta charset="UTF-8">
+  <title>Hotel Booking Dashboard</title>
   <style>
-    :root {
-      --bg: #0b1220;
-      --panel: #121a2a;
-      --soft: #18243a;
-      --muted: #7e8aa5;
-      --text: #e6edf7;
-      --acc: #4da3ff;
-      --acc-2: #6cf0c2;
-      --danger: #ff7b7b;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 18px;
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: #fff;
     }
-    [data-theme="light"]{
-      --bg: #f7f9fc;
-      --panel: #ffffff;
-      --soft: #eef2f9;
-      --muted: #606b85;
-      --text: #0f1320;
-      --acc: #2f6bff;
-      --acc-2: #10b981;
-      --danger: #dc2626;
-      --shadow: 0 10px 24px rgba(14,23,49,.08);
+    header {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.3);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 800px at 80% -10%, rgba(77,163,255,.15), transparent 60%),
-                  radial-gradient(1000px 800px at -10% 110%, rgba(108,240,194,.12), transparent 60%),
-                  var(--bg);
-      color:var(--text);
+    header h1 {
+      margin: 0;
+      font-size: 2.2rem;
     }
-    a{color:var(--acc); text-decoration:none}
-    a:hover{text-decoration:underline}
-
-    /* Layout */
-    .app{display:grid; grid-template-columns: 280px 1fr; gap:22px; padding:22px; min-height:100vh}
-    .sidebar{background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; position:sticky; top:22px; height:calc(100vh - 44px); overflow:auto}
-    .main{display:flex; flex-direction:column; gap:22px}
-    .card{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow:var(--shadow)}
-
-    /* Header */
-    .header{display:flex; gap:14px; align-items:center; padding:16px 18px}
-    .brand{display:flex; align-items:center; gap:10px}
-    .logo{width:36px; height:36px; border-radius:12px; background: linear-gradient(135deg, var(--acc), var(--acc-2)); box-shadow: 0 8px 24px rgba(77,163,255,.35)}
-    .title{font-weight:800; letter-spacing:.2px}
-    .sub{color:var(--muted); font-size:12px}
-
-    .searchbar{display:flex; align-items:center; gap:10px; flex:1; background:var(--soft); padding:10px 12px; border-radius:14px}
-    .searchbar input{background:transparent; border:none; outline:none; color:var(--text); width:100%}
-    .btn{border:none; cursor:pointer; padding:10px 14px; border-radius:12px; color:#fff; background:linear-gradient(135deg,var(--acc),#7bb6ff)}
-    .btn.alt{background:linear-gradient(135deg,var(--acc-2),#6ff2cc); color:#052019}
-    .btn.ghost{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.12)}
-
-    /* Sidebar */
-    .nav h4{margin:0 0 10px 0}
-    .nav a{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; color:var(--text)}
-    .nav a:hover{background:var(--soft)}
-    .divider{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
-    .chip{display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; background:var(--soft); color:var(--muted); font-size:12px}
-
-    /* Sections */
-    .hero{padding:20px 22px}
-    .hero h1{margin:0 0 8px 0; font-size:28px}
-    .hero p{margin:0; color:var(--muted)}
-
-    .grid{display:grid; grid-template-columns: repeat(12, 1fr); gap:22px}
-    .col-4{grid-column: span 4}
-    .col-6{grid-column: span 6}
-    .col-8{grid-column: span 8}
-    .col-12{grid-column: span 12}
-    @media (max-width: 960px){
-      .app{grid-template-columns: 1fr}
-      .sidebar{position:static; height:auto}
-      .grid{grid-template-columns: repeat(6,1fr)}
-      .col-4{grid-column: span 6}
-      .col-6{grid-column: span 6}
-      .col-8{grid-column: span 6}
-      .col-12{grid-column: span 6}
+    header p {
+      margin: 5px 0 0;
     }
-
-    /* Accordions */
-    .accordion{border-top:1px solid rgba(255,255,255,.08)}
-    .accordion details{border-bottom:1px solid rgba(255,255,255,.08)}
-    .accordion summary{cursor:pointer; list-style:none; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
-    .accordion summary::-webkit-details-marker{display:none}
-    .accordion .content{padding:0 18px 16px 18px; color:var(--muted)}
-
-    /* Books */
-    .toolbar{display:flex; align-items:center; gap:10px; padding:14px 18px}
-    .toolbar .input{flex:1; display:flex; align-items:center; gap:8px; background:var(--soft); padding:8px 12px; border-radius:12px}
-    .toolbar input, .toolbar select{border:none; outline:none; background:transparent; color:var(--text)}
-    .books{display:grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap:16px; padding:0 18px 18px}
-    .book{background:linear-gradient(180deg, rgba(77,163,255,.12), transparent 35%), var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:8px}
-    .book h4{margin:2px 0}
-    .book .meta{font-size:13px; color:var(--muted)}
-    .tags{display:flex; flex-wrap:wrap; gap:8px}
-    .tag{padding:4px 8px; border-radius:999px; background:var(--soft); font-size:12px; color:var(--muted)}
-    .book .actions{display:flex; gap:8px; margin-top:auto}
-
-    /* Footer */
-    .footer{padding:14px 18px; color:var(--muted); font-size:12px}
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
+    .auth, .search-section, .results {
+      margin-bottom: 30px;
+    }
+    input, button {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin: 8px 0;
+      width: 100%;
+      font-size: 1rem;
+    }
+    button {
+      background: #00c6ff;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0096cc;
+    }
+    .hotel-card {
+      background: #fff;
+      color: #333;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
+    }
+    .hotel-card:hover {
+      transform: scale(1.02);
+    }
+    .hotel-card h3 {
+      margin: 0;
+      color: #ff416c;
+    }
+    .hidden {
+      display: none;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: rgba(0,0,0,0.2);
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
-  <div class="app" id="app">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="brand" style="margin-bottom:12px">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div class="title">Indian Law Dashboard</div>
-          <div class="sub">Constitution · Rights · Books</div>
-        </div>
-      </div>
-      <div class="nav">
-        <h4>Navigate</h4>
-        <a href="#fundamental-rights">Fundamental Rights</a>
-        <a href="#dpsp">Directive Principles</a>
-        <a href="#duties">Fundamental Duties</a>
-        <a href="#book-collection">Law Books Collection</a>
-        <a href="#resources">Official Resources</a>
-        <div class="divider"></div>
-        <h4>Quick Info</h4>
-        <div class="chip">Articles · Parts · Schedules</div>
-        <div class="chip">Local bookmarks saved</div>
-      </div>
-    </aside>
+  <header>
+    <h1>🏨 TravelEase Hotel Booking</h1>
+    <p>Book hotels from anywhere with one registration. 100% free usage!</p>
+  </header>
 
-    <!-- Main -->
-    <main class="main">
-      <header class="card header">
-        <div class="brand">
-          <div class="logo" aria-hidden="true"></div>
-          <div>
-            <div class="title">Constitution of India — Dashboard</div>
-            <div class="sub">Single-file app (HTML · CSS · JS)</div>
-          </div>
-        </div>
-        <div class="searchbar">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/></svg>
-          <input id="globalSearch" placeholder="Search rights, articles, or books… (e.g., Article 21, CrPC)" />
-        </div>
-        <button class="btn ghost" id="themeToggle" title="Toggle theme">Toggle Theme</button>
-      </header>
+  <div class="container">
+    <!-- Registration & Login -->
+    <div class="auth" id="authSection">
+      <h2>Register / Sign In</h2>
+      <input type="text" id="username" placeholder="Enter Username">
+      <input type="password" id="password" placeholder="Enter Password">
+      <button onclick="register()">Register</button>
+      <button onclick="login()">Sign In</button>
+      <p id="authMsg"></p>
+    </div>
 
-      <section class="card hero">
-        <h1>Know your Constitution. Explore key rights. Find essential law books.</h1>
-        <p>Built for quick reference and study. Use the search bar to filter everything. Bookmark items to save for later (stored in your browser).</p>
-      </section>
+    <!-- Search Hotels -->
+    <div class="search-section hidden" id="searchSection">
+      <h2>Search Hotels</h2>
+      <input type="text" id="placeInput" placeholder="Enter City or Place (e.g. Delhi)">
+      <button onclick="searchHotels()">Search</button>
+    </div>
 
-      <!-- Fundamentals -->
-      <section id="fundamental-rights" class="card">
-        <div class="header" style="justify-content:space-between">
-          <div>
-            <div class="title">Fundamental Rights</div>
-            <div class="sub">Part III · Articles 12–35 · Justiciable rights enforceable in courts</div>
-          </div>
-          <button class="btn alt" data-export="rights">Export Rights Notes</button>
-        </div>
-        <div class="accordion" id="rightsAccordion"></div>
-      </section>
-
-      <div class="grid">
-        <section id="dpsp" class="card col-6">
-          <div class="header">
-            <div>
-              <div class="title">Directive Principles of State Policy (DPSP)</div>
-              <div class="sub">Part IV · Articles 36–51 · Non-justiciable principles guiding governance</div>
-            </div>
-          </div>
-          <div style="padding:0 18px 18px; color:var(--muted)" id="dpspList"></div>
-        </section>
-        <section id="duties" class="card col-6">
-          <div class="header">
-            <div>
-              <div class="title">Fundamental Duties</div>
-              <div class="sub">Part IVA · Article 51A · Duties of citizens</div>
-            </div>
-          </div>
-          <div style="padding:0 18px 18px; color:var(--muted)" id="dutiesList"></div>
-        </section>
-      </div>
-
-      <!-- Books -->
-      <section id="book-collection" class="card">
-        <div class="header" style="justify-content:space-between; align-items:center">
-          <div>
-            <div class="title">Law Books Collection</div>
-            <div class="sub">Curated textbooks, bare acts, and commentaries. (Add your own too!)</div>
-          </div>
-          <div style="display:flex; gap:8px">
-            <button class="btn" id="addBookBtn">Add Book</button>
-            <button class="btn ghost" data-export="books">Export List</button>
-          </div>
-        </div>
-        <div class="toolbar">
-          <div class="input"><input id="bookSearch" placeholder="Search by title, author, act…" /></div>
-          <select id="bookCategory">
-            <option value="">All Categories</option>
-            <option>Constitution</option>
-            <option>Criminal Law</option>
-            <option>Civil Law</option>
-            <option>Procedural Law</option>
-            <option>Evidence</option>
-            <option>Commercial</option>
-            <option>IPR</option>
-            <option>Family</option>
-            <option>Tort</option>
-            <option>Property</option>
-          </select>
-          <select id="bookSort">
-            <option value="title">Sort: Title</option>
-            <option value="author">Sort: Author</option>
-            <option value="year">Sort: Year</option>
-          </select>
-        </div>
-        <div class="books" id="booksGrid"></div>
-      </section>
-
-      <section id="resources" class="card">
-        <div class="header">
-          <div>
-            <div class="title">Official & Helpful Resources</div>
-            <div class="sub">Use reliable sources for statutes and notifications.</div>
-          </div>
-        </div>
-        <div class="hero">
-          <ul>
-            <li><strong>India Code (Official Bare Acts):</strong> <a href="https://www.indiacode.nic.in" target="_blank" rel="noopener">indiacode.nic.in</a></li>
-            <li><strong>Legislative Department:</strong> <a href="https://legislative.gov.in" target="_blank" rel="noopener">legislative.gov.in</a></li>
-            <li><strong>Supreme Court of India:</strong> <a href="https://www.sci.gov.in" target="_blank" rel="noopener">sci.gov.in</a></li>
-            <li><strong>eCourts Services:</strong> <a href="https://ecourts.gov.in" target="_blank" rel="noopener">ecourts.gov.in</a></li>
-          </ul>
-        </div>
-      </section>
-
-      <footer class="footer card">
-        <div><strong>Disclaimer:</strong> This dashboard is for educational reference only and is not legal advice. Verify with official gazettes, updated bare acts, and authoritative commentaries.</div>
-      </footer>
-    </main>
+    <!-- Results -->
+    <div class="results hidden" id="resultsSection">
+      <h2>Available Hotels</h2>
+      <div id="hotelResults"></div>
+    </div>
   </div>
 
+  <footer>
+    🌍 Free to use demo | TravelEase © 2025
+  </footer>
+
   <script>
-    // ---------------------------
-    // Data (summaries kept concise)
-    // ---------------------------
-    const RIGHTS = [
-      { key:'equality', title:'Right to Equality', articles:'Arts. 14–18', summary:'Equality before law, prohibition of discrimination, equality of opportunity in public employment, abolition of untouchability and titles.', notes:'' },
-      { key:'freedom', title:'Right to Freedom', articles:'Arts. 19–22', summary:'Freedoms of speech & expression, assembly, association, movement, residence, profession; protections against arbitrary conviction and preventive detention safeguards.', notes:'' },
-      { key:'exploitation', title:'Right against Exploitation', articles:'Arts. 23–24', summary:'Prohibits human trafficking, begar and other forced labour; bans employment of children in certain hazardous employments.', notes:'' },
-      { key:'religion', title:'Freedom of Religion', articles:'Arts. 25–28', summary:'Freedom of conscience and free profession, practice and propagation of religion; freedom to manage religious affairs; no compulsion in religious instruction in certain institutions.', notes:'' },
-      { key:'culture', title:'Cultural & Educational Rights', articles:'Arts. 29–30', summary:'Protection of interests of minorities; right of minorities to establish and administer educational institutions.', notes:'' },
-      { key:'remedies', title:'Right to Constitutional Remedies', articles:'Art. 32', summary:'Right to move the Supreme Court for enforcement of Fundamental Rights; writs: habeas corpus, mandamus, prohibition, quo warranto, certiorari.', notes:'' },
-    ];
+    // Registration
+    function register() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if (user && pass) {
+        localStorage.setItem('hotelUser', JSON.stringify({user, pass}));
+        document.getElementById('authMsg').innerText = "✅ Registration successful! Please Sign In.";
+      } else {
+        document.getElementById('authMsg').innerText = "⚠️ Enter username and password.";
+      }
+    }
 
-    const DPSP = [
-      'Promote welfare of the people; establish a social order with justice (Art. 38).',
-      'Secure a social, economic and political justice; minimise inequalities (Arts. 38–39).',
-      'Ensure adequate means of livelihood, fair distribution of material resources, prevention of concentration of wealth, equal pay for equal work (Art. 39).',
-      'Provide just and humane conditions of work and maternity relief (Art. 42).',
-      'Promote education and interests of weaker sections, including SCs/STs (Art. 46).',
-      'Organisation of village panchayats (Art. 40).',
-      'Promotion of international peace and security (Art. 51).'
-    ];
+    // Login
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const saved = JSON.parse(localStorage.getItem('hotelUser'));
+      if (saved && saved.user === user && saved.pass === pass) {
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('searchSection').classList.remove('hidden');
+        document.getElementById('resultsSection').classList.remove('hidden');
+      } else {
+        document.getElementById('authMsg').innerText = "❌ Invalid credentials or not registered.";
+      }
+    }
 
-    const DUTIES = [
-      'Abide by the Constitution and respect its ideals and institutions, the National Flag and the National Anthem.',
-      'Cherish and follow the noble ideals which inspired our national struggle for freedom.',
-      'Uphold and protect the sovereignty, unity and integrity of India.',
-      'Defend the country and render national service when called upon to do so.',
-      'Promote harmony and the spirit of common brotherhood and renounce practices derogatory to women.',
-      'Value and preserve the rich heritage of our composite culture.',
-      'Protect and improve the natural environment and have compassion for living creatures.',
-      'Develop scientific temper, humanism and the spirit of inquiry and reform.',
-      'Safeguard public property and abjure violence.',
-      'Strive towards excellence in all spheres of individual and collective activity.',
-      'Parent/guardian duty to provide opportunities for education to child (6 to 14 years).'
-    ];
-
-    const BOOKS = [
-      { id:1, title:'Constitution of India — Bare Act (Latest)', author:'Government of India', year:2024, category:'Constitution', tags:['Bare Act','Official'], link:'https://www.indiacode.nic.in' },
-      { id:2, title:'V.N. Shukla’s Constitution of India', author:'Eminent Editors', year:2023, category:'Constitution', tags:['Commentary'], link:'#'},
-      { id:3, title:'Criminal Procedure Code (CrPC) — Bare Act', author:'Government of India', year:2024, category:'Procedural Law', tags:['Bare Act'], link:'https://www.indiacode.nic.in'},
-      { id:4, title:'Indian Penal Code (IPC)/BNS — Bare Act', author:'Government of India', year:2024, category:'Criminal Law', tags:['Bare Act'], link:'https://www.indiacode.nic.in'},
-      { id:5, title:'Indian Evidence Act — Bare Act', author:'Government of India', year:2024, category:'Evidence', tags:['Bare Act'], link:'https://www.indiacode.nic.in'},
-      { id:6, title:'K.D. Gaur — Textbook on Indian Penal Code', author:'K.D. Gaur', year:2020, category:'Criminal Law', tags:['Textbook'], link:'#'},
-      { id:7, title:'Ratanlal & Dhirajlal — The Code of Criminal Procedure', author:'Ratanlal & Dhirajlal', year:2022, category:'Procedural Law', tags:['Commentary'], link:'#'},
-      { id:8, title:'Pollock & Mulla — Indian Contract Act', author:'Mulla', year:2019, category:'Commercial', tags:['Commentary'], link:'#'},
-      { id:9, title:'Avtar Singh — Law of Contracts & Specific Relief', author:'Avtar Singh', year:2021, category:'Commercial', tags:['Textbook'], link:'#'},
-      { id:10, title:'R.K. Bangia — Law of Torts', author:'R.K. Bangia', year:2018, category:'Tort', tags:['Textbook'], link:'#'},
-      { id:11, title:'Mulla — Transfer of Property Act', author:'Mulla', year:2017, category:'Property', tags:['Commentary'], link:'#'},
-      { id:12, title:'Paris, Cornish & Llewelyn — Intellectual Property', author:'Cornish', year:2019, category:'IPR', tags:['Textbook'], link:'#'},
-      { id:13, title:'Hindu Law — Mulla', author:'Mulla', year:2017, category:'Family', tags:['Commentary'], link:'#'},
-      { id:14, title:'Family Law Lectures', author:'Dr. Paras Diwan', year:2019, category:'Family', tags:['Textbook'], link:'#'},
-    ];
-
-    // -------------
-    // State & Utils
-    // -------------
-    const state = {
-      theme: localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'),
-      rights: RIGHTS,
-      books: JSON.parse(localStorage.getItem('books')||'null') || BOOKS,
-      bookmarks: JSON.parse(localStorage.getItem('bookmarks')||'{}'),
-      notes: JSON.parse(localStorage.getItem('rightsNotes')||'{}')
+    // Demo Hotel Data
+    const hotels = {
+      "Delhi": ["Taj Palace", "The Oberoi", "ITC Maurya"],
+      "Mumbai": ["The Taj Mahal Palace", "JW Marriott Juhu", "Trident Nariman Point"],
+      "Hyderabad": ["Novotel", "ITC Kakatiya", "Park Hyatt"],
+      "Bangalore": ["The Leela Palace", "Taj MG Road", "ITC Gardenia"],
+      "Goa": ["Le Méridien", "Alila Diwa", "Taj Exotica"]
     };
 
-    function save(){
-      localStorage.setItem('books', JSON.stringify(state.books));
-      localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
-      localStorage.setItem('rightsNotes', JSON.stringify(state.notes));
-      localStorage.setItem('theme', state.theme);
-    }
+    // Search Hotels
+    function searchHotels() {
+      const place = document.getElementById('placeInput').value.trim();
+      const resultsDiv = document.getElementById('hotelResults');
+      resultsDiv.innerHTML = "";
 
-    function el(tag, attrs={}, ...children){
-      const node = document.createElement(tag);
-      Object.entries(attrs).forEach(([k,v])=>{
-        if (k==='class') node.className = v;
-        else if (k.startsWith('on') && typeof v === 'function') node.addEventListener(k.slice(2).toLowerCase(), v);
-        else if (k==='html') node.innerHTML=v;
-        else node.setAttribute(k,v);
-      });
-      children.forEach(ch=>{
-        if (ch==null) return;
-        node.appendChild(typeof ch === 'string' ? document.createTextNode(ch) : ch);
-      })
-      return node;
-    }
-
-    // ----------------
-    // Render: Rights
-    // ----------------
-    function renderRights(filter=''){
-      const wrap = document.getElementById('rightsAccordion');
-      wrap.innerHTML='';
-      state.rights.filter(r=> matchAny([r.title,r.articles,r.summary], filter)).forEach(r=>{
-        const open = false;
-        const det = el('details', {open});
-        const sum = el('summary', {},
-          el('div', {style:'display:flex; flex-direction:column; gap:4px'},
-            el('div', {style:'font-weight:600'}, `${r.title} — ${r.articles}`),
-            el('div', {class:'sub'}, r.summary)
-          ),
-          el('div', {class:'tags'},
-            el('span', {class:'tag'}, 'Part III'),
-            el('span', {class:'tag'}, 'Justiciable')
-          )
-        );
-        const content = el('div', {class:'content'});
-        const noteKey = r.key;
-        const ta = el('textarea', {style:'width:100%; min-height:72px; border-radius:12px; padding:10px; border:1px solid rgba(255,255,255,.14); background:var(--soft); color:var(--text);'}, state.notes[noteKey]||'');
-        ta.addEventListener('input', ()=>{ state.notes[noteKey]=ta.value; save(); })
-        const btn = el('button', {class:'btn ghost', style:'margin-top:10px'}, 'Bookmark This Right');
-        btn.addEventListener('click', ()=>{
-          state.bookmarks[`right:${noteKey}`] = { type:'right', key:noteKey, title:r.title, when: Date.now() };
-          save();
-          btn.textContent='Bookmarked ✓';
-        })
-        content.append(
-          el('p', {}, 'Add your notes or key cases related to this right:'),
-          ta,
-          el('div', {style:'display:flex; gap:8px; margin-top:8px'}, btn)
-        );
-        det.append(sum, content);
-        wrap.appendChild(det);
-      });
-    }
-
-    // ---------------
-    // Render: DPSP & Duties
-    // ---------------
-    function renderBullets(list, targetId){
-      const t = document.getElementById(targetId);
-      t.innerHTML = '';
-      const ul = el('ul');
-      list.forEach(x=> ul.appendChild(el('li', {}, x)));
-      t.appendChild(ul);
-    }
-
-    // ---------------
-    // Render: Books
-    // ---------------
-    function renderBooks(filter='', category='', sortBy='title'){
-      const grid = document.getElementById('booksGrid');
-      grid.innerHTML='';
-      const items = state.books
-        .filter(b=> (category? b.category===category : true))
-        .filter(b=> matchAny([b.title, b.author, b.category, (b.tags||[]).join(' ')], filter))
-        .sort((a,b)=>{
-          if (sortBy==='year') return (b.year||0)-(a.year||0);
-          const A = String(a[sortBy]||'').toLowerCase();
-          const B = String(b[sortBy]||'').toLowerCase();
-          return A.localeCompare(B);
+      if (hotels[place]) {
+        hotels[place].forEach(hotel => {
+          const card = document.createElement("div");
+          card.className = "hotel-card";
+          card.innerHTML = `<h3>${hotel}</h3> <button onclick="alert('Booked ${hotel}!')">Book Now</button>`;
+          resultsDiv.appendChild(card);
         });
-
-      items.forEach(b=>{
-        const isSaved = !!state.bookmarks[`book:${b.id}`];
-        const card = el('div', {class:'book'});
-        card.append(
-          el('div', {class:'tags'},
-            el('span', {class:'tag'}, b.category),
-            ...(b.tags||[]).map(t=> el('span', {class:'tag'}, t))
-          ),
-          el('h4', {}, b.title),
-          el('div', {class:'meta'}, `${b.author} · ${b.year||'—'}`),
-          el('div', {class:'actions'},
-            el('a', {class:'btn', href:b.link||'#', target:'_blank', rel:'noopener'}, 'Open / Buy'),
-            (()=>{
-              const bb = el('button', {class:'btn ghost'}, isSaved? 'Saved ✓' : 'Bookmark');
-              bb.addEventListener('click', ()=>{
-                state.bookmarks[`book:${b.id}`] = { type:'book', id:b.id, title:b.title, when: Date.now() };
-                save();
-                bb.textContent='Saved ✓';
-              });
-              return bb;
-            })()
-          )
-        );
-        grid.appendChild(card);
-      });
+      } else {
+        resultsDiv.innerHTML = "<p>No hotels found for this location.</p>";
+      }
     }
-
-    // ---------------
-    // Helpers
-    // ---------------
-    function matchAny(fields, query){
-      const q = (query||'').trim().toLowerCase();
-      if (!q) return true;
-      return fields.some(f=> String(f||'').toLowerCase().includes(q));
-    }
-
-    function exportJSON(filename, data){
-      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename; a.click();
-      setTimeout(()=> URL.revokeObjectURL(url), 1500);
-    }
-
-    // ---------------
-    // Add Book Modal (minimal, inline)
-    // ---------------
-    function openAddBook(){
-      const overlay = el('div', {style:'position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:50'});
-      const box = el('div', {style:'width:min(620px,92vw); background:var(--panel); border-radius:16px; box-shadow:var(--shadow); padding:18px;'});
-      const f = el('form');
-      f.innerHTML = `
-        <h3 style="margin:0 0 6px">Add a Law Book</h3>
-        <p class="sub">Enter details and save. Stored locally in your browser.</p>
-        <div style="display:grid; gap:10px; grid-template-columns:1fr 1fr">
-          <label>Title<br><input required name="title" style="width:100%"/></label>
-          <label>Author<br><input name="author" style="width:100%"/></label>
-          <label>Year<br><input name="year" type="number" style="width:100%"/></label>
-          <label>Category<br>
-            <select name="category" style="width:100%">
-              <option>Constitution</option><option>Criminal Law</option><option>Procedural Law</option><option>Evidence</option><option>Civil Law</option><option>Commercial</option><option>IPR</option><option>Family</option><option>Tort</option><option>Property</option>
-            </select>
-          </label>
-          <label style="grid-column: span 2">Tags (comma-separated)<br><input name="tags" style="width:100%"/></label>
-          <label style="grid-column: span 2">Link (URL to buy/open)<br><input name="link" style="width:100%" placeholder="https://…"/></label>
-        </div>
-        <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px">
-          <button type="button" class="btn ghost" id="cancelAdd">Cancel</button>
-          <button class="btn" type="submit">Save Book</button>
-        </div>
-      `;
-      f.querySelector('#cancelAdd').addEventListener('click', ()=> overlay.remove());
-      f.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const fd = new FormData(f);
-        const book = {
-          id: Math.max(0, ...state.books.map(b=>b.id))+1,
-          title: fd.get('title'),
-          author: fd.get('author'),
-          year: Number(fd.get('year')) || null,
-          category: fd.get('category'),
-          tags: String(fd.get('tags')||'').split(',').map(s=>s.trim()).filter(Boolean),
-          link: fd.get('link')
-        };
-        state.books.push(book);
-        save();
-        renderBooks(document.getElementById('bookSearch').value, document.getElementById('bookCategory').value, document.getElementById('bookSort').value);
-        overlay.remove();
-      })
-      box.appendChild(f);
-      overlay.appendChild(box);
-      document.body.appendChild(overlay);
-    }
-
-    // ---------------
-    // Global Search (live)
-    // ---------------
-    function wireSearch(){
-      const input = document.getElementById('globalSearch');
-      input.addEventListener('input', ()=>{
-        const q = input.value;
-        renderRights(q);
-        renderBooks(q, document.getElementById('bookCategory').value, document.getElementById('bookSort').value);
-      })
-    }
-
-    // ---------------
-    // Event Listeners
-    // ---------------
-    document.getElementById('themeToggle').addEventListener('click', ()=>{
-      state.theme = (state.theme==='light') ? 'dark' : 'light';
-      applyTheme(); save();
-    });
-
-    document.querySelector('[data-export="books"]').addEventListener('click', ()=>{
-      exportJSON('law-books.json', state.books);
-    });
-    document.querySelector('[data-export="rights"]').addEventListener('click', ()=>{
-      exportJSON('rights-notes.json', state.notes);
-    });
-
-    document.getElementById('addBookBtn').addEventListener('click', openAddBook);
-
-    document.getElementById('bookSearch').addEventListener('input', (e)=>{
-      renderBooks(e.target.value, document.getElementById('bookCategory').value, document.getElementById('bookSort').value)
-    });
-    document.getElementById('bookCategory').addEventListener('change', ()=>{
-      renderBooks(document.getElementById('bookSearch').value, document.getElementById('bookCategory').value, document.getElementById('bookSort').value)
-    });
-    document.getElementById('bookSort').addEventListener('change', ()=>{
-      renderBooks(document.getElementById('bookSearch').value, document.getElementById('bookCategory').value, document.getElementById('bookSort').value)
-    });
-
-    // ---------------
-    // Theme
-    // ---------------
-    function applyTheme(){
-      document.documentElement.setAttribute('data-theme', state.theme);
-    }
-
-    // ---------------
-    // Init
-    // ---------------
-    function init(){
-      applyTheme();
-      renderRights();
-      renderBullets(DPSP, 'dpspList');
-      renderBullets(DUTIES, 'dutiesList');
-      renderBooks();
-      wireSearch();
-    }
-
-    init();
   </script>
 </body>
 </html>
