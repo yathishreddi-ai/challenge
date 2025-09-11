@@ -2,212 +2,124 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Smart Helmet Accident Dash</title>
+  <title>Smart Safe Dashboard</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f6f9; }
-    .container { max-width: 600px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 16px; box-shadow: 0 2px 8px #bbb9; }
-    h1 { text-align: center; color: #1677ff; }
-    .tab-btn { margin: 0 10px; padding: 10px 20px; background: #e6f0ff; color: #357; border: none; border-radius: 8px; cursor: pointer; }
-    .tab-btn.active { background: #1677ff; color: #fff; }
-    .hidden { display: none; }
-    label { display: block; margin: 15px 0 5px; }
-    input, button, select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; }
-    .dashboard { margin-top: 25px; }
-    .video-container { background: #222; text-align: center; margin-bottom: 18px; border-radius: 8px; }
-    video { width: 90%; max-width: 350px; border-radius: 8px; }
-    #map { width: 100%; height: 250px; border-radius: 10px; }
-    .status { margin: 10px 0; color: #090; }
-    .hospital-list { margin: 12px 0 0 0; }
-    .hospital-list li { background: #f7f9fc; border-left: 4px solid #1677ff; margin-bottom: 5px; padding: 8px; list-style: none; }
-    .dashboard-icons { text-align: right; }
-    .dashboard-icons img { width: 38px; margin-left: 6px; vertical-align: middle; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f5f7fa; }
+    header { background: #11406d; color: #fff; padding: 1rem 2rem; font-size: 1.6rem; }
+    .container { padding: 2rem; }
+    #status { margin-top: 1rem; font-weight: bold; }
+    video { width: 360px; height: 240px; background: #333; border-radius: 6px; }
+    .map { width: 360px; height: 200px; margin-top: 1rem; }
+    .hospital-info { margin-top: 1rem; background: #fff; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 6px #ddd; }
+    button { background: #138b60; color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 5px; font-size: 1rem; cursor: pointer; }
+    button:disabled { background: #777; }
   </style>
 </head>
 <body>
+  <header>Smart Safe Accident Reduction Dashboard</header>
   <div class="container">
-    <h1>
-      <img src="https://i.ibb.co/jMQJhb8/helmet-blue.png" width="38" style="vertical-align:middle;margin-right:6px">
-      Smart Helmet Accident Dash
-    </h1>
+    <button id="connectBtn">Connect & Start Monitoring</button>
+    <div id="status">Status: Waiting to connect...</div>
+    <video id="video" autoplay muted></video>
     <div>
-      <button class="tab-btn active" id="signinBtn">Sign In</button>
-      <button class="tab-btn" id="signupBtn">Create Account</button>
+      <strong>Live Location:</strong>
+      <span id="location">Not detected</span>
     </div>
-    <form id="signinForm" autocomplete="off">
-      <label>Email</label>
-      <input type="email" id="loginEmail" required>
-      <label>Password</label>
-      <input type="password" id="loginPass" required>
-      <button type="submit">Sign In</button>
-    </form>
-    <form id="signupForm" class="hidden" autocomplete="off">
-      <label>Email</label>
-      <input type="email" id="regEmail" required>
-      <label>Password</label>
-      <input type="password" id="regPass" required>
-      <button type="submit">Create Account</button>
-    </form>
-
-    <div id="dashboard" class="dashboard hidden">
-      <div class="dashboard-icons">
-        <img src="https://i.ibb.co/yPR5S9N/location.png" title="Live Location">
-        <img src="https://i.ibb.co/fDMNhMt/hospital.png" title="Nearby Hospitals">
-        <img src="https://i.ibb.co/MB3P7FF/bluetooth.png" id="btIcon" title="Helmet" style="opacity:0.4">
-      </div>
-      <div style="margin:20px 0;">
-        <button id="connectHelmetBtn">Connect Helmet Bluetooth</button>
-        <span id="helmetStatus" class="status"></span>
-      </div>
-      <div class="video-container">
-        <video id="video" autoplay playsinline muted></video>
-        <div>
-          <button id="startRecBtn" disabled>Start Recording</button>
-          <button id="stopRecBtn" disabled>Stop Recording</button>
-          <span id="recStatus" class="status"></span>
-        </div>
-      </div>
-      <div>
-        <button id="locateBtn">Show My Location & Nearby Hospitals</button>
-        <div id="location"></div>
-        <div id="map"></div>
-        <ul class="hospital-list" id="hospitalList"></ul>
-      </div>
-      <div style="margin:20px 0;">
-        <button id="simulateAccidentBtn" style="background:#ff3c3c;color:#fff;">Simulate Accident & Alert Ambulance</button>
-      </div>
-      <div id="alertMsg"></div>
+    <div id="map" class="map"></div>
+    <div class="hospital-info">
+      <strong>Nearest Hospital:</strong>
+      <div id="hospital">No data</div>
+      <button id="callHospitalBtn" disabled>Call Hospital</button>
     </div>
   </div>
-
   <script>
-    // Tab switching
-    signinBtn.onclick = () => {
-      signinBtn.classList.add('active');
-      signupBtn.classList.remove('active');
-      signinForm.classList.remove('hidden');
-      signupForm.classList.add('hidden');
+    // Helper: Display status
+    function setStatus(msg) { document.getElementById('status').innerText = 'Status: ' + msg; }
+
+    // Camera/mic setup
+    let mediaRecorder, stream, chunks = [];
+    async function startMedia() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('video').srcObject = stream;
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = e => chunks.push(e.data);
+        mediaRecorder.start();
+        setStatus('Recording started. Monitoring...');
+      } catch (e) {
+        setStatus('Media access denied.');
+      }
     }
-    signupBtn.onclick = () => {
-      signupBtn.classList.add('active');
-      signinBtn.classList.remove('active');
-      signupForm.classList.remove('hidden');
-      signinForm.classList.add('hidden');
+
+    // Get location and display + map
+    let coords = {lat:null, lng:null};
+    function showMap(lat, lng) {
+      const mapDiv = document.getElementById('map');
+      mapDiv.innerHTML = `<iframe width="100%" height="100%" frameborder="0"
+        src="https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed"></iframe>`;
     }
-    // Authentication simulation
-    let users = {};
-    signupForm.onsubmit = e => {
-      e.preventDefault();
-      users[regEmail.value] = regPass.value;
-      alert('Account created. Please sign in.');
-      signinBtn.click();
-    }
-    signinForm.onsubmit = e => {
-      e.preventDefault();
-      if (users[loginEmail.value] === loginPass.value) {
-        signinForm.classList.add('hidden');
-        signupForm.classList.add('hidden');
-        document.querySelector('.tab-btn.active').classList.remove('active');
-        dashboard.classList.remove('hidden');
+    function getLocationAndHospital() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async pos => {
+          coords.lat = pos.coords.latitude;
+          coords.lng = pos.coords.longitude;
+          document.getElementById('location').innerText =
+            `${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`;
+          showMap(coords.lat, coords.lng);
+          await fetchNearestHospital(coords.lat, coords.lng);
+        });
       } else {
-        alert('Invalid credentials!');
+        document.getElementById('location').innerText = 'Geolocation unavailable';
       }
     }
 
-    // Bluetooth simulation
-    let helmetConnected = false;
-    connectHelmetBtn.onclick = async () => {
-      // Simulate bluetooth connection; replace with actual navigator.bluetooth in real use
-      helmetStatus.textContent = 'Connecting to Smart Helmet...';
+    // Find nearest hospital using Google Places API
+    async function fetchNearestHospital(lat, lng) {
+      // Needs a Google Places API key for live deployment
+      const apiKey = 'YOUR_GOOGLE_PLACES_API_KEY';
+      const url =
+        `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=2000&type=hospital&key=${apiKey}`;
+      // For demo: display placeholder, as browser can't fetch this API directly due to CORS
+      document.getElementById('hospital').innerHTML =
+        'City Hospital<br>123 Main St.<br>Phone: 000-000-0000';
+      document.getElementById('callHospitalBtn').disabled = false;
+      // Uncomment below and use a backend to proxy Google API call for production
+      // const resp = await fetch('YOUR_BACKEND_PROXY?lat=' + lat + '&lng=' + lng);
+      // const data = await resp.json();
+      // Show top result in UI...
+    }
+
+    // Bluetooth setup (simulation)
+    async function connectBluetoothAndStart() {
+      setStatus('Connecting to Smart Safe device...');
+      // Here would be the real bluetooth pairing, simulated now:
       setTimeout(() => {
-        helmetConnected = true;
-        btIcon.style.opacity = 1;
-        connectHelmetBtn.disabled = true;
-        helmetStatus.textContent = 'Helmet Connected!';
-        startRecBtn.disabled = false;
-      }, 1200);
+        setStatus('Bluetooth connected!');
+        startMedia();
+        getLocationAndHospital();
+        simulateAccidentDetection();
+      }, 2000);
     }
 
-    // Camera & mic
-    let stream = null, mediaRecorder, chunks = [];
-    startRecBtn.onclick = async () => {
-      startRecBtn.disabled = true;
-      stopRecBtn.disabled = false;
-      recStatus.textContent = 'Recording...';
-      if (!stream) {
-        stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true });
-        video.srcObject = stream;
-      }
-      mediaRecorder = new MediaRecorder(stream);
-      chunks = [];
-      mediaRecorder.ondataavailable = e => chunks.push(e.data);
-      mediaRecorder.start();
+    // Accident detection simulation + emergency actions
+    function simulateAccidentDetection() {
+      setTimeout(() => {
+        setStatus('Accident detected! Notifying hospital...');
+        handleEmergency();
+      }, 10000); // simulate after 10 seconds
     }
-    stopRecBtn.onclick = () => {
-      stopRecBtn.disabled = true;
-      startRecBtn.disabled = !helmetConnected;
-      recStatus.textContent = 'Stopped!';
-      if (mediaRecorder) {
-        mediaRecorder.stop();
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          localStorage.setItem('lastIncidentVideo', URL.createObjectURL(blob));
-        }
-      }
+    function handleEmergency() {
+      const now = new Date();
+      const message = `Accident detected!\nTime: ${now.toLocaleTimeString()} Date: ${now.toLocaleDateString()}\nLocation: ${coords.lat}, ${coords.lng}`;
+      // Send SMS/call (would use Twilio or similar via server in production)
+      alert('Calling hospital and sending emergency details:\n' + message);
+      document.getElementById('callHospitalBtn').disabled = true;
+      setStatus('Ambulance notified, message sent with time and coordinates.');
     }
 
-    // Geolocation & Nearby Hospitals
-    let myLat, myLng;
-    locateBtn.onclick = () => {
-      if (!navigator.geolocation) {
-        location.textContent = "Geolocation not supported";
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(pos => {
-        myLat = pos.coords.latitude;
-        myLng = pos.coords.longitude;
-        location.textContent = Lat: ${myLat.toFixed(5)}, Lng: ${myLng.toFixed(5)};
-        showMapWithNearbyHospitals(myLat, myLng);
-      }, () => {
-        location.textContent = 'Unable to retrieve your location';
-      });
-    }
-    // Google Maps + Nearby Hospitals
-    function showMapWithNearbyHospitals(lat, lng) {
-      map.innerHTML = ''; hospitalList.innerHTML = '';
-      const script = document.createElement('script');
-      script.src = https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places;
-      document.head.appendChild(script);
-      script.onload = function() {
-        let mapObj = new google.maps.Map(document.getElementById('map'), {
-          center: { lat, lng }, zoom: 14
-        });
-        new google.maps.Marker({ position: { lat, lng }, map: mapObj, label: "You" });
-        let service = new google.maps.places.PlacesService(mapObj);
-        service.nearbySearch({
-          location: { lat, lng }, radius: 5000, type: ['hospital']
-        }, (results, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (let h of results.slice(0,5)) {
-              let li = document.createElement('li');
-              li.textContent = ${h.name}, ${h.vicinity};
-              hospitalList.appendChild(li);
-              new google.maps.Marker({ position: h.geometry.location, map: mapObj, icon: "https://i.ibb.co/fDMNhMt/hospital.png" });
-            }
-          }
-        });
-      }
-    }
-    // Accident Simulation and Alert
-    simulateAccidentBtn.onclick = () => {
-      if (!myLat || !myLng) { alertMsg.textContent = "Get your live location first!"; return; }
-      stopRecBtn.click(); // auto-stop rec
-      let ts = new Date().toLocaleString();
-      alertMsg.innerHTML = `<b>SOS sent to ambulance driver</b>. Accident at [${myLat.toFixed(5)}, ${myLng.toFixed(5)}]<br>
-      Time: ${ts}<br>
-      <b>Ambulance called automatically.</b>`;
-      // Dummy sms/voicecall logic
-      setTimeout(()=>alertMsg.innerHTML += "<br><i>Video and location logs saved for authorities.</i>", 1500);
-    }
+    // Manual call to hospital
+    document.getElementById('callHospitalBtn').onclick = handleEmergency;
+    document.getElementById('connectBtn').onclick = connectBluetoothAndStart;
   </script>
 </body>
 </html>
