@@ -2,171 +2,211 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hotel Booking Dashboard</title>
+  <title>Smart Helmet Accident Dash</title>
   <style>
-    body {
-      margin: 0;
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #ff416c, #ff4b2b);
-      color: #fff;
-    }
-    header {
-      text-align: center;
-      padding: 20px;
-      background: rgba(0,0,0,0.3);
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2.2rem;
-    }
-    header p {
-      margin: 5px 0 0;
-    }
-    .container {
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 20px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 12px;
-    }
-    .auth, .search-section, .results {
-      margin-bottom: 30px;
-    }
-    input, button {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      margin: 8px 0;
-      width: 100%;
-      font-size: 1rem;
-    }
-    button {
-      background: #00c6ff;
-      color: #fff;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #0096cc;
-    }
-    .hotel-card {
-      background: #fff;
-      color: #333;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
-      transition: transform 0.3s;
-    }
-    .hotel-card:hover {
-      transform: scale(1.02);
-    }
-    .hotel-card h3 {
-      margin: 0;
-      color: #ff416c;
-    }
-    .hidden {
-      display: none;
-    }
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: rgba(0,0,0,0.2);
-      font-size: 0.9rem;
-    }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f6f9; }
+    .container { max-width: 600px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 16px; box-shadow: 0 2px 8px #bbb9; }
+    h1 { text-align: center; color: #1677ff; }
+    .tab-btn { margin: 0 10px; padding: 10px 20px; background: #e6f0ff; color: #357; border: none; border-radius: 8px; cursor: pointer; }
+    .tab-btn.active { background: #1677ff; color: #fff; }
+    .hidden { display: none; }
+    label { display: block; margin: 15px 0 5px; }
+    input, button, select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; }
+    .dashboard { margin-top: 25px; }
+    .video-container { background: #222; text-align: center; margin-bottom: 18px; border-radius: 8px; }
+    video { width: 90%; max-width: 350px; border-radius: 8px; }
+    #map { width: 100%; height: 250px; border-radius: 10px; }
+    .status { margin: 10px 0; color: #090; }
+    .hospital-list { margin: 12px 0 0 0; }
+    .hospital-list li { background: #f7f9fc; border-left: 4px solid #1677ff; margin-bottom: 5px; padding: 8px; list-style: none; }
+    .dashboard-icons { text-align: right; }
+    .dashboard-icons img { width: 38px; margin-left: 6px; vertical-align: middle; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🏨 TravelEase Hotel Booking</h1>
-    <p>Book hotels from anywhere with one registration. 100% free usage!</p>
-  </header>
-
   <div class="container">
-    <!-- Registration & Login -->
-    <div class="auth" id="authSection">
-      <h2>Register / Sign In</h2>
-      <input type="text" id="username" placeholder="Enter Username">
-      <input type="password" id="password" placeholder="Enter Password">
-      <button onclick="register()">Register</button>
-      <button onclick="login()">Sign In</button>
-      <p id="authMsg"></p>
+    <h1>
+      <img src="https://i.ibb.co/jMQJhb8/helmet-blue.png" width="38" style="vertical-align:middle;margin-right:6px">
+      Smart Helmet Accident Dash
+    </h1>
+    <div>
+      <button class="tab-btn active" id="signinBtn">Sign In</button>
+      <button class="tab-btn" id="signupBtn">Create Account</button>
     </div>
+    <form id="signinForm" autocomplete="off">
+      <label>Email</label>
+      <input type="email" id="loginEmail" required>
+      <label>Password</label>
+      <input type="password" id="loginPass" required>
+      <button type="submit">Sign In</button>
+    </form>
+    <form id="signupForm" class="hidden" autocomplete="off">
+      <label>Email</label>
+      <input type="email" id="regEmail" required>
+      <label>Password</label>
+      <input type="password" id="regPass" required>
+      <button type="submit">Create Account</button>
+    </form>
 
-    <!-- Search Hotels -->
-    <div class="search-section hidden" id="searchSection">
-      <h2>Search Hotels</h2>
-      <input type="text" id="placeInput" placeholder="Enter City or Place (e.g. Delhi)">
-      <button onclick="searchHotels()">Search</button>
-    </div>
-
-    <!-- Results -->
-    <div class="results hidden" id="resultsSection">
-      <h2>Available Hotels</h2>
-      <div id="hotelResults"></div>
+    <div id="dashboard" class="dashboard hidden">
+      <div class="dashboard-icons">
+        <img src="https://i.ibb.co/yPR5S9N/location.png" title="Live Location">
+        <img src="https://i.ibb.co/fDMNhMt/hospital.png" title="Nearby Hospitals">
+        <img src="https://i.ibb.co/MB3P7FF/bluetooth.png" id="btIcon" title="Helmet" style="opacity:0.4">
+      </div>
+      <div style="margin:20px 0;">
+        <button id="connectHelmetBtn">Connect Helmet Bluetooth</button>
+        <span id="helmetStatus" class="status"></span>
+      </div>
+      <div class="video-container">
+        <video id="video" autoplay playsinline muted></video>
+        <div>
+          <button id="startRecBtn" disabled>Start Recording</button>
+          <button id="stopRecBtn" disabled>Stop Recording</button>
+          <span id="recStatus" class="status"></span>
+        </div>
+      </div>
+      <div>
+        <button id="locateBtn">Show My Location & Nearby Hospitals</button>
+        <div id="location"></div>
+        <div id="map"></div>
+        <ul class="hospital-list" id="hospitalList"></ul>
+      </div>
+      <div style="margin:20px 0;">
+        <button id="simulateAccidentBtn" style="background:#ff3c3c;color:#fff;">Simulate Accident & Alert Ambulance</button>
+      </div>
+      <div id="alertMsg"></div>
     </div>
   </div>
 
-  <footer>
-    🌍 Free to use demo | TravelEase © 2025
-  </footer>
-
   <script>
-    // Registration
-    function register() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      if (user && pass) {
-        localStorage.setItem('hotelUser', JSON.stringify({user, pass}));
-        document.getElementById('authMsg').innerText = "✅ Registration successful! Please Sign In.";
+    // Tab switching
+    signinBtn.onclick = () => {
+      signinBtn.classList.add('active');
+      signupBtn.classList.remove('active');
+      signinForm.classList.remove('hidden');
+      signupForm.classList.add('hidden');
+    }
+    signupBtn.onclick = () => {
+      signupBtn.classList.add('active');
+      signinBtn.classList.remove('active');
+      signupForm.classList.remove('hidden');
+      signinForm.classList.add('hidden');
+    }
+    // Authentication simulation
+    let users = {};
+    signupForm.onsubmit = e => {
+      e.preventDefault();
+      users[regEmail.value] = regPass.value;
+      alert('Account created. Please sign in.');
+      signinBtn.click();
+    }
+    signinForm.onsubmit = e => {
+      e.preventDefault();
+      if (users[loginEmail.value] === loginPass.value) {
+        signinForm.classList.add('hidden');
+        signupForm.classList.add('hidden');
+        document.querySelector('.tab-btn.active').classList.remove('active');
+        dashboard.classList.remove('hidden');
       } else {
-        document.getElementById('authMsg').innerText = "⚠️ Enter username and password.";
+        alert('Invalid credentials!');
       }
     }
 
-    // Login
-    function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      const saved = JSON.parse(localStorage.getItem('hotelUser'));
-      if (saved && saved.user === user && saved.pass === pass) {
-        document.getElementById('authSection').classList.add('hidden');
-        document.getElementById('searchSection').classList.remove('hidden');
-        document.getElementById('resultsSection').classList.remove('hidden');
-      } else {
-        document.getElementById('authMsg').innerText = "❌ Invalid credentials or not registered.";
+    // Bluetooth simulation
+    let helmetConnected = false;
+    connectHelmetBtn.onclick = async () => {
+      // Simulate bluetooth connection; replace with actual navigator.bluetooth in real use
+      helmetStatus.textContent = 'Connecting to Smart Helmet...';
+      setTimeout(() => {
+        helmetConnected = true;
+        btIcon.style.opacity = 1;
+        connectHelmetBtn.disabled = true;
+        helmetStatus.textContent = 'Helmet Connected!';
+        startRecBtn.disabled = false;
+      }, 1200);
+    }
+
+    // Camera & mic
+    let stream = null, mediaRecorder, chunks = [];
+    startRecBtn.onclick = async () => {
+      startRecBtn.disabled = true;
+      stopRecBtn.disabled = false;
+      recStatus.textContent = 'Recording...';
+      if (!stream) {
+        stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true });
+        video.srcObject = stream;
+      }
+      mediaRecorder = new MediaRecorder(stream);
+      chunks = [];
+      mediaRecorder.ondataavailable = e => chunks.push(e.data);
+      mediaRecorder.start();
+    }
+    stopRecBtn.onclick = () => {
+      stopRecBtn.disabled = true;
+      startRecBtn.disabled = !helmetConnected;
+      recStatus.textContent = 'Stopped!';
+      if (mediaRecorder) {
+        mediaRecorder.stop();
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'video/webm' });
+          localStorage.setItem('lastIncidentVideo', URL.createObjectURL(blob));
+        }
       }
     }
 
-    // Demo Hotel Data
-    const hotels = {
-      "Delhi": ["Taj Palace", "The Oberoi", "ITC Maurya"],
-      "Mumbai": ["The Taj Mahal Palace", "JW Marriott Juhu", "Trident Nariman Point"],
-      "Hyderabad": ["Novotel", "ITC Kakatiya", "Park Hyatt"],
-      "Bangalore": ["The Leela Palace", "Taj MG Road", "ITC Gardenia"],
-      "Goa": ["Le Méridien", "Alila Diwa", "Taj Exotica"]
-    };
-
-    // Search Hotels
-    function searchHotels() {
-      const place = document.getElementById('placeInput').value.trim();
-      const resultsDiv = document.getElementById('hotelResults');
-      resultsDiv.innerHTML = "";
-
-      if (hotels[place]) {
-        hotels[place].forEach(hotel => {
-          const card = document.createElement("div");
-          card.className = "hotel-card";
-          card.innerHTML = `<h3>${hotel}</h3> <button onclick="alert('Booked ${hotel}!')">Book Now</button>`;
-          resultsDiv.appendChild(card);
+    // Geolocation & Nearby Hospitals
+    let myLat, myLng;
+    locateBtn.onclick = () => {
+      if (!navigator.geolocation) {
+        location.textContent = "Geolocation not supported";
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(pos => {
+        myLat = pos.coords.latitude;
+        myLng = pos.coords.longitude;
+        location.textContent = Lat: ${myLat.toFixed(5)}, Lng: ${myLng.toFixed(5)};
+        showMapWithNearbyHospitals(myLat, myLng);
+      }, () => {
+        location.textContent = 'Unable to retrieve your location';
+      });
+    }
+    // Google Maps + Nearby Hospitals
+    function showMapWithNearbyHospitals(lat, lng) {
+      map.innerHTML = ''; hospitalList.innerHTML = '';
+      const script = document.createElement('script');
+      script.src = https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places;
+      document.head.appendChild(script);
+      script.onload = function() {
+        let mapObj = new google.maps.Map(document.getElementById('map'), {
+          center: { lat, lng }, zoom: 14
         });
-      } else {
-        resultsDiv.innerHTML = "<p>No hotels found for this location.</p>";
+        new google.maps.Marker({ position: { lat, lng }, map: mapObj, label: "You" });
+        let service = new google.maps.places.PlacesService(mapObj);
+        service.nearbySearch({
+          location: { lat, lng }, radius: 5000, type: ['hospital']
+        }, (results, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            for (let h of results.slice(0,5)) {
+              let li = document.createElement('li');
+              li.textContent = ${h.name}, ${h.vicinity};
+              hospitalList.appendChild(li);
+              new google.maps.Marker({ position: h.geometry.location, map: mapObj, icon: "https://i.ibb.co/fDMNhMt/hospital.png" });
+            }
+          }
+        });
       }
+    }
+    // Accident Simulation and Alert
+    simulateAccidentBtn.onclick = () => {
+      if (!myLat || !myLng) { alertMsg.textContent = "Get your live location first!"; return; }
+      stopRecBtn.click(); // auto-stop rec
+      let ts = new Date().toLocaleString();
+      alertMsg.innerHTML = `<b>SOS sent to ambulance driver</b>. Accident at [${myLat.toFixed(5)}, ${myLng.toFixed(5)}]<br>
+      Time: ${ts}<br>
+      <b>Ambulance called automatically.</b>`;
+      // Dummy sms/voicecall logic
+      setTimeout(()=>alertMsg.innerHTML += "<br><i>Video and location logs saved for authorities.</i>", 1500);
     }
   </script>
 </body>
